@@ -1,0 +1,488 @@
+:root {
+  --bg-start: #0f172a; /* slate-900 */
+  --bg-end: #0b7285;   /* cyan-700 */
+  --card-bg: rgba(255, 255, 255, 0.08);
+  --card-border: rgba(255, 255, 255, 0.16);
+  --text: #e6f4f1;
+  --muted: #c3d4d1;
+  --accent: #4dd0e1;
+  --accent-2: #a78bfa;
+  --btn-bg: #14b8a6;
+  --btn-bg-hover: #0d9488;
+  
+  /* UPDATED: Specific image URLs for each page */
+  --image-url-doctor: url('/images/WhatsApp Image 2025-11-06 at 10.01.21_8c323147.jpg'); /* DOCTOR IMAGE PATH */
+  --image-url-user: url('/images/technology-integrated-everyday-life.jpg'); 
+  --image-url-receptionist: url('/images/medical-nurse-talking-with-patient-phone-about-diagnosis-health-care-physician-sitting-desk-using-computer-modern-clinic-looking-monitor.jpg'); /* REPLACE WITH YOUR RECEPTIONIST IMAGE PATH */
+  --image-url-home: url('/images/happy-excited-young-female-doctor-physician-celebrating-achieve-goal-smiling-pleased-winning-standing-white-coat-against-blue-background.jpg'); 
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  
+  background: var(--bg-start); /* Base color fallback */
+  /* Removed fixed attachment to avoid banding/artifacts with backdrop-filter */
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, Noto Sans, Ubuntu, Cantarell, Helvetica Neue, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+
+
+
+/* Home page video styles */
+.home-page-bg .home-container {
+  position: relative;
+  
+  min-height: calc(100vh - 200px);
+}
+
+.home-page-bg .video-container {
+  position: relative;
+  margin-top: -30px;
+  width: 200%;
+  max-width: 600px;
+  z-index: 1;
+  left: 10%;
+}
+
+.home-page-bg .hero-video {
+  width: 50%;
+  max-height: 500px;
+  height: auto;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  border: 2px solid rgba(77, 208, 225, 0.3);
+}
+
+/* Adjust hero position to not overlap with video */
+.home-page-bg .hero {
+  position: relative;
+  z-index: 2;
+  text-align: left;
+  padding-right:20%;
+  
+}
+
+/* Mobile adjustments for video */
+@media (max-width: 768px) {
+  .home-page-bg .video-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 20px 0;
+  }
+
+  .home-page-bg .hero {
+    padding-left: 0;
+  }
+  
+  .home-page-bg .hero-video {
+    max-height: 400px;
+  }
+}
+
+/* Use a fixed overlay for page backgrounds to avoid scroll banding */
+body.page-background::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+  background: var(--page-gradient), var(--page-image-url) no-repeat center center;
+  background-size: cover;
+  pointer-events: none;
+  will-change: transform;
+}
+
+
+.page-background {
+    /* DEFAULT: Darker overlay for high readability on most pages */
+    --page-gradient: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(11, 114, 133, 0.7)); 
+}
+
+
+
+.doctor-page-bg {
+    --page-image-url: var(--image-url-doctor);
+}
+
+.user-page-bg {
+  --page-image-url: var(--image-url-user);
+  --page-gradient: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(11, 114, 133, 0.7));
+}
+
+
+.receptionist-page-bg {
+    --page-image-url: var(--image-url-receptionist);
+}
+
+.home-page-bg {
+  --page-image-url: var(--image-url-home);
+  background-size: 120%; 
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+
+.home-page-bg .about {
+  position: absolute;
+  top: 30%;            
+  right: 38%;          
+  width: 45%;          
+  z-index: 2;
+}
+
+
+.home-page-bg .about p,
+.home-page-bg .about h3 {
+  color: #e6f4f1;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px;
+}
+
+/* Mobile-first adjustments */
+@media (max-width: 768px) {
+  .container { padding: 16px; }
+  .hero { margin: 4px 0 16px; padding: 12px 0; }
+  .hero h1 { font-size: 32px; }
+  .subtitle-prominent { font-size: 1rem; }
+  .card { padding: 12px; border-radius: 10px; }
+  .row { gap: 8px; }
+  .textarea, .input { width: 100%; }
+  .grid { gap: 16px; }
+  .soap-display-section { grid-template-columns: 1fr; }
+  .chat-section { height: 55vh; }
+  .scroll-to-options-btn { width: 52px; height: 52px; font-size: 26px; line-height: 52px; }
+
+  /* Home page: ensure image covers and content stacks nicely on mobile */
+  .home-page-bg { background-size: cover; background-position: center; }
+  .home-page-bg .about { position: static; right: auto; width: 100%; z-index: 1; }
+
+  /* Receptionist: tighten layout for controls and modal */
+  .receptionist-page-bg { background-size: cover; background-position: center; }
+  .header { align-items: flex-start; }
+  .email-preview-container { padding: 12px; }
+
+  /* On mobile, let page background scroll with content to avoid perceived image shift */
+  body.page-background::before { display: none; }
+  .page-background {
+    background: var(--page-gradient), var(--page-image-url) no-repeat center center;
+    background-size: cover;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  text-decoration: none;
+  color: var(--text);
+}
+
+.hero {
+  margin: 10px 0 8px;
+  padding: 18px 0;
+  /* CHANGED: Align content to the left */
+  text-align: left; 
+}
+
+.hero h1 {
+  margin: 0 0 6px;
+  /* CHANGED: Significantly larger heading for a dominant look */
+  font-size: 72px; 
+  line-height: 1.1; 
+  letter-spacing: -1px;
+  color: var(--accent); /* Highlight the heading */
+}
+
+/* NEW: Style for the prominent subheading */
+.subtitle-prominent {
+    color: var(--text); /* Use the main text color to make it stand out more than subtle */
+    font-size: 1.75rem; /* Increased font size */
+    font-weight: 300; /* Lighter weight for a modern look */
+    margin-top: 10px;
+}
+
+.subtle {
+  color: var(--muted);
+}
+
+.grid {
+  display: grid;
+  gap: 24px;
+}
+
+@media (min-width: 900px) {
+  .grid-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.card {
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* Stronger shadow against image */
+  backdrop-filter: blur(8px); /* Increased blur for better separation */
+}
+
+.card h2, .card h3 {
+  margin-top: 0;
+}
+
+/* Styles for the animated arrow/toggle button */
+.scroll-to-options-btn {
+    display: block;
+    margin: 20px auto 40px;
+    background: var(--accent-2);
+    border: none;
+    border-radius: 50%;
+    /* Increased size from previous step */
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    /* CHANGE: Added pulse-glow animation */
+    animation: bounce 2s infinite, pulse-glow 3s infinite alternate; 
+    color: var(--text);
+    /* Increased font size and line-height from previous step */
+    font-size: 30px; 
+    line-height: 60px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(167,139,250,0.5);
+    /* Removed positioning for dots */
+}
+
+.scroll-to-options-btn:hover {
+    transform: scale(1.1);
+    animation: none;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+/* NEW: Pulse Glow Animation Keyframes (Replaces the rotating dots) */
+@keyframes pulse-glow {
+  0% {
+    /* Subtle initial shadow, then a large, subtle expanding shadow */
+    box-shadow: 0 0 0 0 rgba(77,208,225, 0.4), 0 0 20px rgba(167,139,250,0.8);
+  }
+  100% {
+    /* Expanded shadow, with the internal shadow slightly larger */
+    box-shadow: 0 0 0 25px rgba(77,208,225, 0), 0 0 30px rgba(167,139,250,1);
+  }
+}
+
+/* Removed the ::before and ::after dot styles */
+
+
+/* NEW: Styles for the individual SOAP sections */
+.card-mini {
+  border: 1px solid var(--card-border);
+  background: rgba(255, 255, 255, 0.04); /* Slightly lighter background than main card */
+  border-radius: 8px; /* Smaller radius */
+  padding: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  min-height: 100px; /* Ensure better layout for 4 sections */
+}
+
+.card-mini h4 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: var(--accent); /* Highlight the section title */
+  font-size: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15); /* Slightly clearer line */
+  padding-bottom: 4px;
+}
+
+/* NEW: Container for the 4 SOAP sections */
+.soap-sections {
+  margin-top: 10px;
+  gap: 16px; /* Slightly tighter gap than main grid */
+}
+
+.btn {
+  background: var(--btn-bg);
+  color: white;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: var(--btn-bg-hover);
+  transform: translateY(-2px);
+  transition: all 0.2s ease;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--card-border);
+}
+
+.btn-outline:hover {
+  background: rgba(20, 184, 166, 0.1);
+  border-color: var(--btn-bg);
+  transform: translateY(-2px);
+  transition: all 0.2s ease;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.textarea, .input {
+  padding: 10px;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+}
+
+/* Styles for the Plan Textarea (Updated from previous step) */
+.plan-textarea {
+  min-height: 180px; /* Make the plan area more prominent */
+  border: 1px solid var(--accent-2); /* Accent border for the Plan */
+  background: rgba(167,139,250,0.06); /* Light purple background for emphasis */
+}
+
+.preview pre {
+  white-space: pre-wrap;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(90deg, rgba(77,208,225,0.25), rgba(167,139,250,0.25));
+  border: 1px solid var(--card-border);
+  padding: 6px 10px;
+  border-radius: 9999px;
+  color: var(--text);
+}
+
+.about {
+  margin-top: 28px;
+}
+
+/* Doctor page specific styles */
+.soap-summary-section {
+  border: 2px solid var(--accent);
+  box-shadow: 0 10px 30px rgba(77, 208, 225, 0.2);
+}
+
+.email-section {
+  border: 2px solid var(--accent-2);
+  box-shadow: 0 10px 30px rgba(167, 139, 250, 0.2);
+}
+
+.email-preview-container {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid var(--card-border);
+}
+
+.email-textarea {
+  border: 2px solid var(--accent-2);
+  background: rgba(167, 139, 250, 0.08);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.email-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(77, 208, 225, 0.1);
+}
+
+/* User page layout */
+.user-page-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+@media (max-width: 900px) {
+  .user-page-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.soap-display-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.chat-section {
+  display: flex;
+  flex-direction: column;
+  height: 600px;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  border: 1px solid var(--card-border);
+}
+
+.chat-message {
+  margin-bottom: 12px;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.chat-message.user {
+  background: rgba(77, 208, 225, 0.15);
+  border-left: 3px solid var(--accent);
+}
+
+.chat-message.bot {
+  background: rgba(167, 139, 250, 0.15);
+  border-left: 3px solid var(--accent-2);
+}
+
+.chat-input-container {
+  display: flex;
+  gap: 8px;
+}
+
+.chat-input-container input {
+  flex: 1;
+}

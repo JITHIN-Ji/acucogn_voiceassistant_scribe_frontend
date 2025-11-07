@@ -1,0 +1,272 @@
+
+import { useState, useEffect, useRef } from 'react';
+import { api } from '../api/client';
+import type { Patient, CreatePatientPayload } from '../types';
+
+// Generate or get session ID from localStorage
+function getSessionId(): string {
+  let sessionId = localStorage.getItem('session_id');
+  if (!sessionId) {
+    sessionId = Math.random().toString(36).substring(2, 10); // 8 character ID
+    localStorage.setItem('session_id', sessionId);
+  }
+  return sessionId;
+}
+
+export function Receptionist() {
+  const sessionIdRef = useRef<string>(getSessionId());
+  
+  // Apply background image + gradient for Receptionist page
+  useEffect(() => {
+    document.body.classList.add('page-background', 'receptionist-page-bg');
+    return () => {
+      document.body.classList.remove('page-background', 'receptionist-page-bg');
+    };
+  }, []);
+  const [showForm, setShowForm] = useState(false);
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [selectedPatient, setSelectedPatient] = useState<string>('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+
+  // Form state
+  const [formData, setFormData] = useState<CreatePatientPayload>({
+    name: '',
+    address: '',
+    phone_number: '',
+    problem: '',
+  });
+
+  // Load patients on mount
+  useEffect(() => {
+    loadPatients();
+  }, []);
+
+  const loadPatients = async () => {
+    try {
+      // Send session_id with request
+      const response = await api.getPatients(sessionIdRef.current);
+      if (response.status === 'success' && response.patients) {
+        setPatients(response.patients);
+      }
+    } catch (error: any) {
+      console.error('Error loading patients:', error);
+      setError('Failed to load patients');
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setMessage('');
+    setLoading(true);
+
+    if (!formData.name.trim()) {
+      setError('Patient name is required');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // Send session_id with request
+      const response = await api.createPatient({ ...formData, session_id: sessionIdRef.current });
+      if (response.status === 'success') {
+        setMessage('Patient saved successfully!');
+        setFormData({
+          name: '',
+          address: '',
+          phone_number: '',
+          problem: '',
+        });
+        setShowForm(false);
+        await loadPatients(); // Reload patients list
+      } else {
+        setError(response.message || 'Failed to save patient');
+      }
+    } catch (error: any) {
+      console.error('Error saving patient:', error);
+      setError(error?.response?.data?.message || 'Failed to save patient');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCloseForm = () => {
+    setShowForm(false);
+    setFormData({
+      name: '',
+      address: '',
+      phone_number: '',
+      problem: '',
+    });
+    setError('');
+    setMessage('');
+  };
+
+  return (
+    <div>
+      <div className="hero">
+        <h1>Receptionist Portal</h1>
+        <p className="subtle subtitle-prominent">Manage patient appointments and communications.</p>
+      </div>
+      
+      {/* Control row moved below the main heading and styled */}
+      <div style={{
+        display: 'flex',
+        gap: '12px',
+        alignItems: 'center',
+        marginTop: '20px', // Space after hero text
+        marginBottom: '20px', // Space before next section
+        flexWrap: 'wrap' // Allow wrapping on small screens
+      }}>
+        <select
+          value={selectedPatient}
+          onChange={(e) => setSelectedPatient(e.target.value)}
+          className="input"
+          style={{ minWidth: '200px', color: selectedPatient ? '#000' : 'var(--text)' }}
+        >
+          <option value="" style={{ color: 'var(--text)' }}>Select Patient</option>
+          {patients.map((patient) => (
+            <option key={patient.token_id} value={patient.token_id} style={{ color: '#000' }}>
+              {patient.name}
+            </option>
+          ))}
+        </select>
+        <button className="btn" onClick={() => setShowForm(true)}>
+          Add Patients
+        </button>
+      </div>
+
+      {selectedPatient && (
+        <section className="card"> {/* Removed redundant marginTop: 16 as margin is added by the div above */}
+          <h3>Selected Patient Information</h3>
+          {(() => {
+            const patient = patients.find(p => p.token_id === selectedPatient);
+            if (patient) {
+              return (
+                <div>
+                  <p><strong>Name:</strong> {patient.name}</p>
+                  <p><strong>Address:</strong> {patient.address || 'N/A'}</p>
+                  <p><strong>Phone:</strong> {patient.phone_number || 'N/A'}</p>
+                  <p><strong>Problem:</strong> {patient.problem || 'N/A'}</p>
+                  <p className="subtle"><strong>Token ID:</strong> {patient.token_id}</p>
+                </div>
+              );
+            }
+            return <p>Patient not found</p>;
+          })()}
+        </section>
+      )}
+
+      {/* Patient Form Modal */}
+      {showForm && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000,
+        }}>
+          <div className="card" style={{
+            maxWidth: '500px',
+            width: '90%',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            position: 'relative',
+          }}>
+            <button
+              onClick={handleCloseForm}
+              style={{
+                position: 'absolute',
+                top: '12px',
+                right: '12px',
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text)',
+                fontSize: '24px',
+                cursor: 'pointer',
+                padding: '4px 8px',
+              }}
+            >
+              ×
+            </button>
+            <h2 style={{ marginTop: 0 }}>Add New Patient</h2>
+            <form onSubmit={handleSubmit}>
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', marginBottom: 8 }}>
+                  Patient Name <span style={{ color: '#dc2626' }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="input"
+                  style={{ width: '100%' }}
+                  required
+                />
+              </div>
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', marginBottom: 8 }}>Address</label>
+                <input
+                  type="text"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  className="input"
+                  style={{ width: '100%' }}
+                />
+              </div>
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', marginBottom: 8 }}>Phone Number</label>
+                <input
+                  type="tel"
+                  name="phone_number"
+                  value={formData.phone_number}
+                  onChange={handleInputChange}
+                  className="input"
+                  style={{ width: '100%' }}
+                />
+              </div>
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', marginBottom: 8 }}>Patient's Problem</label>
+                <textarea
+                  name="problem"
+                  value={formData.problem}
+                  onChange={handleInputChange}
+                  className="textarea"
+                  style={{ width: '100%', minHeight: '100px' }}
+                  rows={4}
+                />
+              </div>
+              {error && <p style={{ color: '#c92a2a', marginBottom: 12 }}>{error}</p>}
+              {message && <p style={{ color: 'var(--accent)', marginBottom: 12 }}>{message}</p>}
+              <div className="row" style={{ marginTop: 16 }}>
+                <button type="submit" className="btn" disabled={loading}>
+                  {loading ? 'Saving...' : 'Save'}
+                </button>
+                <button type="button" className="btn btn-outline" onClick={handleCloseForm}>
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
