@@ -11,7 +11,7 @@ const VoiceVisualizer = ({ stream }: { stream: MediaStream | null }) => {
     const [levels, setLevels] = useState<number[]>(new Array(7).fill(0));
     const animationFrameRef = useRef<number>();
     const analyserRef = useRef<AnalyserNode>();
-    const dataArrayRef = useRef<Uint8Array>();
+    const dataArrayRef = useRef<Uint8Array<ArrayBuffer>>();
 
     useEffect(() => {
         if (!stream) return;
@@ -37,7 +37,7 @@ const VoiceVisualizer = ({ stream }: { stream: MediaStream | null }) => {
             
             analyserRef.current.getByteFrequencyData(dataArrayRef.current);
             
-            // Calculate average volume - FIXED: Using manual loop
+            // Calculate average volume using manual loop
             let sum = 0;
             for (let i = 0; i < dataArrayRef.current.length; i++) {
                 sum += dataArrayRef.current[i];
@@ -128,7 +128,7 @@ export function AudioRecorder({ onProcessed }: Props) {
   const [permissionError, setPermissionError] = useState('');
   const [recording, setRecording] = useState(false);
   const [loading, setLoading] = useState(false);
-  const streamRef = useRef<MediaStream | null>(null); // To manage the stream
+  const streamRef = useRef<MediaStream | null>(null);
 
   async function start() {
     if (recording || loading) return;
