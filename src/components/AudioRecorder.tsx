@@ -37,8 +37,8 @@ const VoiceVisualizer = ({ stream }: { stream: MediaStream | null }) => {
             
             analyserRef.current.getByteFrequencyData(dataArrayRef.current);
             
-            // Calculate average volume - FIXED LINE
-            const average = Array.from(dataArrayRef.current).reduce((a, b) => a + b, 0) / dataArrayRef.current.length;
+            // Calculate average volume - FIXED: Using spread operator
+            const average = [...dataArrayRef.current].reduce((a, b) => a + b, 0) / dataArrayRef.current.length;
             
             // Normalize to 0-1 range and apply threshold
             const normalizedLevel = Math.min(average / 128, 1);
@@ -163,6 +163,7 @@ export function AudioRecorder({ onProcessed }: Props) {
         const type = mr.mimeType || 'audio/webm';
         const blob = new Blob(chunksRef.current, { type }); 
         const file = new File([blob], 'recording.webm', { type });
+        
         
         try {
           const res = await api.processAudio(file, true); 
