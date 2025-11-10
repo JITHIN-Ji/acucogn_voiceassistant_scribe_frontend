@@ -1,19 +1,19 @@
 :root {
   --bg-start: #0f172a; /* slate-900 */
-  --bg-end: #0b7285;   /* cyan-700 */
+  --bg-end: #11c1e0;   /* cyan-700 */
   --card-bg: rgba(255, 255, 255, 0.08);
   --card-border: rgba(255, 255, 255, 0.16);
   --text: #e6f4f1;
   --muted: #c3d4d1;
   --accent: #4dd0e1;
-  --accent-2: #a78bfa;
+  --accent-2: #7b5dd4;
   --btn-bg: #14b8a6;
   --btn-bg-hover: #0d9488;
   
   /* UPDATED: Specific image URLs for each page */
-  --image-url-doctor: url('/images/WhatsApp Image 2025-11-06 at 10.01.21_8c323147.jpg'); /* DOCTOR IMAGE PATH */
+  --image-url-doctor: url('/images/'); /* DOCTOR IMAGE PATH */
   --image-url-user: url('/images/technology-integrated-everyday-life.jpg'); 
-  --image-url-receptionist: url('/images/medical-nurse-talking-with-patient-phone-about-diagnosis-health-care-physician-sitting-desk-using-computer-modern-clinic-looking-monitor.jpg'); /* REPLACE WITH YOUR RECEPTIONIST IMAGE PATH */
+  --image-url-receptionist: url('/images/medical-nurse-talking-with-patient-phone-about-diagnosis-health-care-physician-sitting-desk-using-computer-modern-clinic-looking-monitor.jpg');
   --image-url-home: url('/images/happy-excited-young-female-doctor-physician-celebrating-achieve-goal-smiling-pleased-winning-standing-white-coat-against-blue-background.jpg'); 
 }
 
@@ -24,39 +24,99 @@ html, body, #root {
 body {
   margin: 0;
   color: var(--text);
-  
   background: var(--bg-start); /* Base color fallback */
-  /* Removed fixed attachment to avoid banding/artifacts with backdrop-filter */
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, Noto Sans, Ubuntu, Cantarell, Helvetica Neue, "Apple Color Emoji", "Segoe UI Emoji";
 }
 
+/* Professional font for home page */
+.home-page-bg {
+  font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
 
-
-
-/* Home page video styles */
+/* Home page video styles - PROFESSIONAL VERSION */
 .home-page-bg .home-container {
   position: relative;
-  
   min-height: calc(100vh - 200px);
 }
 
 .home-page-bg .video-container {
   position: relative;
-  margin-top: -30px;
-  width: 200%;
+  margin-top: 50px;
+  width: 100%;
   max-width: 600px;
   z-index: 1;
-  left: 10%;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(77, 208, 225, 0.2);
+}
+
+/* Sophisticated gradient overlay matching your brand */
+.home-page-bg .video-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg, 
+    rgba(15, 23, 42, 0.3) 0%,
+    rgba(14, 116, 144, 0.25) 30%,
+    rgba(77, 208, 225, 0.2) 60%,
+    rgba(20, 184, 166, 0.15) 100%
+  );
+  z-index: 2;
+  pointer-events: none;
+  border-radius: 20px;
+  mix-blend-mode: multiply;
+}
+
+/* Cyan color wash for brand consistency */
+.home-page-bg .video-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(77, 208, 225, 0.12) 0%,
+    rgba(20, 184, 166, 0.08) 50%,
+    transparent 100%
+  );
+  z-index: 3;
+  pointer-events: none;
+  border-radius: 20px;
+  mix-blend-mode: screen;
 }
 
 .home-page-bg .hero-video {
-  width: 50%;
+  width: 100%;
   max-height: 500px;
   height: auto;
   object-fit: cover;
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-  border: 2px solid rgba(77, 208, 225, 0.3);
+  display: block;
+  border-radius: 20px;
+  /* Professional color correction */
+  filter: 
+    saturate(0.8) 
+    brightness(0.92) 
+    contrast(1.08)
+    hue-rotate(-5deg);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.home-page-bg .hero-video:hover {
+  filter: 
+    saturate(0.95) 
+    brightness(1) 
+    contrast(1.12)
+    hue-rotate(0deg);
+  transform: scale(1.02);
 }
 
 /* Adjust hero position to not overlap with video */
@@ -64,8 +124,7 @@ body {
   position: relative;
   z-index: 2;
   text-align: left;
-  padding-right:20%;
-  
+  padding-right: 20%;
 }
 
 /* Mobile adjustments for video */
@@ -78,6 +137,7 @@ body {
 
   .home-page-bg .hero {
     padding-left: 0;
+    padding-right: 0;
   }
   
   .home-page-bg .hero-video {
@@ -100,16 +160,13 @@ body.page-background::before {
   will-change: transform;
 }
 
-
 .page-background {
-    /* DEFAULT: Darker overlay for high readability on most pages */
-    --page-gradient: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(11, 114, 133, 0.7)); 
+  /* DEFAULT: Darker overlay for high readability on most pages */
+  --page-gradient: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(11, 114, 133, 0.7)); 
 }
 
-
-
 .doctor-page-bg {
-    --page-image-url: var(--image-url-doctor);
+  --page-image-url: var(--image-url-doctor);
 }
 
 .user-page-bg {
@@ -117,9 +174,8 @@ body.page-background::before {
   --page-gradient: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(11, 114, 133, 0.7));
 }
 
-
 .receptionist-page-bg {
-    --page-image-url: var(--image-url-receptionist);
+  --page-image-url: var(--image-url-receptionist);
 }
 
 .home-page-bg {
@@ -129,7 +185,6 @@ body.page-background::before {
   background-repeat: no-repeat;
 }
 
-
 .home-page-bg .about {
   position: absolute;
   top: 30%;            
@@ -138,12 +193,12 @@ body.page-background::before {
   z-index: 2;
 }
 
-
 .home-page-bg .about p,
 .home-page-bg .about h3 {
   color: #e6f4f1;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
+
 .container {
   max-width: 1100px;
   margin: 0 auto;
@@ -195,25 +250,22 @@ body.page-background::before {
 .hero {
   margin: 10px 0 8px;
   padding: 18px 0;
-  /* CHANGED: Align content to the left */
   text-align: left; 
 }
 
 .hero h1 {
   margin: 0 0 6px;
-  /* CHANGED: Significantly larger heading for a dominant look */
   font-size: 72px; 
   line-height: 1.1; 
   letter-spacing: -1px;
-  color: var(--accent); /* Highlight the heading */
+  color: var(--accent);
 }
 
-/* NEW: Style for the prominent subheading */
 .subtitle-prominent {
-    color: var(--text); /* Use the main text color to make it stand out more than subtle */
-    font-size: 1.75rem; /* Increased font size */
-    font-weight: 300; /* Lighter weight for a modern look */
-    margin-top: 10px;
+  color: var(--text);
+  font-size: 1.75rem;
+  font-weight: 300;
+  margin-top: 10px;
 }
 
 .subtle {
@@ -236,8 +288,8 @@ body.page-background::before {
   background: var(--card-bg);
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* Stronger shadow against image */
-  backdrop-filter: blur(8px); /* Increased blur for better separation */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  backdrop-filter: blur(8px);
 }
 
 .card h2, .card h3 {
@@ -246,30 +298,26 @@ body.page-background::before {
 
 /* Styles for the animated arrow/toggle button */
 .scroll-to-options-btn {
-    display: block;
-    margin: 20px auto 40px;
-    background: var(--accent-2);
-    border: none;
-    border-radius: 50%;
-    /* Increased size from previous step */
-    width: 60px;
-    height: 60px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-    /* CHANGE: Added pulse-glow animation */
-    animation: bounce 2s infinite, pulse-glow 3s infinite alternate; 
-    color: var(--text);
-    /* Increased font size and line-height from previous step */
-    font-size: 30px; 
-    line-height: 60px;
-    text-align: center;
-    box-shadow: 0 0 15px rgba(167,139,250,0.5);
-    /* Removed positioning for dots */
+  display: block;
+  margin: 20px auto 40px;
+  background: var(--accent-2);
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  animation: bounce 2s infinite, pulse-glow 3s infinite alternate; 
+  color: var(--text);
+  font-size: 30px; 
+  line-height: 60px;
+  text-align: center;
+  box-shadow: 0 0 15px rgba(167,139,250,0.5);
 }
 
 .scroll-to-options-btn:hover {
-    transform: scale(1.1);
-    animation: none;
+  transform: scale(1.1);
+  animation: none;
 }
 
 @keyframes bounce {
@@ -284,44 +332,37 @@ body.page-background::before {
   }
 }
 
-/* NEW: Pulse Glow Animation Keyframes (Replaces the rotating dots) */
 @keyframes pulse-glow {
   0% {
-    /* Subtle initial shadow, then a large, subtle expanding shadow */
     box-shadow: 0 0 0 0 rgba(77,208,225, 0.4), 0 0 20px rgba(167,139,250,0.8);
   }
   100% {
-    /* Expanded shadow, with the internal shadow slightly larger */
     box-shadow: 0 0 0 25px rgba(77,208,225, 0), 0 0 30px rgba(167,139,250,1);
   }
 }
 
-/* Removed the ::before and ::after dot styles */
-
-
-/* NEW: Styles for the individual SOAP sections */
+/* Styles for the individual SOAP sections */
 .card-mini {
   border: 1px solid var(--card-border);
-  background: rgba(255, 255, 255, 0.04); /* Slightly lighter background than main card */
-  border-radius: 8px; /* Smaller radius */
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
   padding: 12px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  min-height: 100px; /* Ensure better layout for 4 sections */
+  min-height: 100px;
 }
 
 .card-mini h4 {
   margin-top: 0;
   margin-bottom: 8px;
-  color: var(--accent); /* Highlight the section title */
+  color: var(--accent);
   font-size: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15); /* Slightly clearer line */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   padding-bottom: 4px;
 }
 
-/* NEW: Container for the 4 SOAP sections */
 .soap-sections {
   margin-top: 10px;
-  gap: 16px; /* Slightly tighter gap than main grid */
+  gap: 16px;
 }
 
 .btn {
@@ -367,11 +408,10 @@ body.page-background::before {
   color: var(--text);
 }
 
-/* Styles for the Plan Textarea (Updated from previous step) */
 .plan-textarea {
-  min-height: 180px; /* Make the plan area more prominent */
-  border: 1px solid var(--accent-2); /* Accent border for the Plan */
-  background: rgba(167,139,250,0.06); /* Light purple background for emphasis */
+  min-height: 180px;
+  border: 1px solid var(--accent-2);
+  background: rgba(167,139,250,0.06);
 }
 
 .preview pre {
@@ -485,4 +525,40 @@ body.page-background::before {
 
 .chat-input-container input {
   flex: 1;
+}
+
+/* Voice Visualizer Styles - Voice Reactive */
+.voice-visualizer-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 15px 0 0;
+  height: 30px;
+}
+
+.voice-bar {
+  width: 30px;
+  height: 5px;
+  background-color: #70d6ff;
+  border-radius: 2px;
+  will-change: height;
+}
+
+.voice-bar.bar-l2 {
+  margin-right: 19px;
+}
+
+.voice-bar.bar-r1 {
+  margin-left: 12px;
+}
+
+.voice-dot {
+  width: 6px;
+  min-width: 4px;
+  height: 4px;
+  background-color: var(--muted);
+  border-radius: 50%;
+  transform-origin: center;
+  will-change: transform, opacity;
 }

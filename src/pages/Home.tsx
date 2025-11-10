@@ -73,7 +73,7 @@ export function Home() {
           muted
           controls
         >
-          <source src="/videos/video.mp4" type="video/mp4" />
+          <source src="/videos/InShot_20251110_163959340.mp4" type="video/mp4" />
           <source src="/videos/your-video.webm" type="video/webm" />
           Your browser does not support the video tag.
         </video>
