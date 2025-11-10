@@ -37,8 +37,12 @@ const VoiceVisualizer = ({ stream }: { stream: MediaStream | null }) => {
             
             analyserRef.current.getByteFrequencyData(dataArrayRef.current);
             
-            // Calculate average volume - FIXED: Using spread operator
-            const average = [...dataArrayRef.current].reduce((a, b) => a + b, 0) / dataArrayRef.current.length;
+            // Calculate average volume - FIXED: Using manual loop
+            let sum = 0;
+            for (let i = 0; i < dataArrayRef.current.length; i++) {
+                sum += dataArrayRef.current[i];
+            }
+            const average = sum / dataArrayRef.current.length;
             
             // Normalize to 0-1 range and apply threshold
             const normalizedLevel = Math.min(average / 128, 1);
