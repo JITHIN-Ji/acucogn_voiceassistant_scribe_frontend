@@ -207,32 +207,36 @@ export function AudioRecorder({ onProcessed }: Props) {
 
   return (
     <div>
-      <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-        <button 
-          onClick={start} 
-          disabled={recording || loading} 
-          className="btn"
-          style={{ padding: '8px 14px', backgroundColor: recording ? '#868e96' : '#2ed573' }} 
-        >
-          Start Recording
-        </button>
+      <div style={{ border: '1px solid #dee2e6', borderRadius: 8, padding: 16 }}>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+          <button 
+            onClick={start} 
+            disabled={recording || loading} 
+            style={{ padding: '8px 14px', backgroundColor: 'white', color: '#000', border: 'none', borderRadius: '4px', cursor: recording || loading ? 'not-allowed' : 'pointer', opacity: recording || loading ? 0.6 : 1 }} 
+          >
+            Start Recording
+          </button>
 
-        <button 
-          onClick={stop} 
-          disabled={!recording || loading} 
-          className="btn"
-          style={{ padding: '8px 14px', backgroundColor: loading ? '#868e96' : '#ff4757' }} 
-        >
-          {loading ? 'Processing…' : 'Stop Recording'}
-        </button>
-        
-        {loading && <span style={{ color: 'var(--accent)' }}>Processing Audio...</span>}
+          <button 
+            onClick={stop} 
+            disabled={!recording || loading} 
+            style={{ padding: '8px 14px', backgroundColor: 'white', color: '#000', border: 'none', borderRadius: '4px', cursor: !recording || loading ? 'not-allowed' : 'pointer', opacity: !recording || loading ? 0.6 : 1 }} 
+          >
+            {loading ? 'Processing…' : 'Stop Recording'}
+          </button>
+          
+          {loading && <span style={{ color: 'var(--accent)' }}>Processing Audio...</span>}
+        </div>
+
+        {/* Voice-reactive visualizer - appears in same container */}
+        {recording && (
+          <div style={{ marginTop: '15px' }}>
+            <VoiceVisualizer stream={streamRef.current} />
+          </div>
+        )}
+
+        {permissionError && <p style={{ color: '#ff4757', marginTop: 12, marginBottom: 0 }}>{permissionError}</p>}
       </div>
-
-      {/* Voice-reactive visualizer */}
-      {recording && <VoiceVisualizer stream={streamRef.current} />}
-
-      {permissionError && <p style={{ color: '#ff4757', marginTop: 8 }}>{permissionError}</p>}
     </div>
   );
 }
