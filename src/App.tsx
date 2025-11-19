@@ -1,13 +1,4 @@
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Home } from './pages/Home';
-import { Doctor } from './pages/Doctor';
-// import { Receptionist } from './pages/Receptionist';
-import { User } from './pages/User'; 
-import { Login } from './pages/Login';
-import { ProtectedRoute } from './components/ProtectedRoute';
-import { useAuth } from './contexts/AuthContext';
-
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { Home } from './pages/Home';
 import { Doctor } from './pages/Doctor';
@@ -16,6 +7,7 @@ import { User } from './pages/User';
 import { Login } from './pages/Login';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { useAuth } from './contexts/AuthContext';
+
 
 function Navigation() {
   const location = useLocation();
