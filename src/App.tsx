@@ -9,6 +9,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { useAuth } from './contexts/AuthContext';
 
 
+
 function Navigation() {
   const location = useLocation();
   const { user, logout, isAuthenticated } = useAuth();
