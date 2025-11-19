@@ -1,5 +1,14 @@
 import axios from 'axios';
-import type { ApprovePlanPayload, ApprovePlanResponse, ProcessAudioResponse, RootResponse, UserChatPayload, UserChatResponse, CreatePatientPayload, PatientResponse } from '../types';
+import type { 
+  ApprovePlanPayload, 
+  ApprovePlanResponse, 
+  ProcessAudioResponse, 
+  RootResponse, 
+  UserChatPayload, 
+  UserChatResponse, 
+  CreatePatientPayload, 
+  PatientResponse 
+} from '../types';
 
 const baseURL = (import.meta as any).env?.VITE_API_BASE_URL || 'https://web-application-voice-assitant.onrender.com';
 
@@ -10,6 +19,68 @@ const instance = axios.create({
   baseURL: useProxy ? '/api' : baseURL,
 });
 
+// Add request interceptor to include auth token in all requests
+instance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor to handle 401 errors (expired/invalid tokens)
+instance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token is invalid or expired
+      localStorage.removeItem('auth_token');
+      // Redirect to login page
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+// Auth API endpoints
+export const authApi = {
+  async googleAuth(googleToken: string): Promise<{
+    status: string;
+    token: string;
+    user: {
+      email: string;
+      name: string;
+      picture: string;
+    };
+  }> {
+    const res = await instance.post('/auth/google', { token: googleToken });
+    return res.data;
+  },
+
+  async verifyToken(): Promise<{
+    status: string;
+    user: {
+      email: string;
+      name: string;
+      picture: string;
+    };
+  }> {
+    const res = await instance.get('/auth/verify');
+    return res.data;
+  },
+
+  async logout(): Promise<{ status: string; message: string }> {
+    const res = await instance.post('/auth/logout');
+    return res.data;
+  },
+};
+
+// Main API endpoints
 export const api = {
   async getRoot(): Promise<RootResponse> {
     const res = await instance.get('/');
@@ -53,5 +124,3 @@ export const api = {
     return res.data;
   },
 };
-
-
