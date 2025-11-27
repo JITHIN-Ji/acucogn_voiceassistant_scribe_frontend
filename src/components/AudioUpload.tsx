@@ -4,9 +4,10 @@ import type { ProcessAudioResponse } from '../types';
 
 type Props = {
   onProcessed?: (res: ProcessAudioResponse) => void;
+  patientTokenId?: string;
 };
 
-export function AudioUpload({ onProcessed }: Props) {
+export function AudioUpload({ onProcessed, patientTokenId }: Props) {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ProcessAudioResponse | null>(null);
@@ -22,7 +23,7 @@ export function AudioUpload({ onProcessed }: Props) {
     }
     try {
       setLoading(true);
-      const res = await api.processAudio(file);
+      const res = await api.processAudio(file, false, patientTokenId);
       setResult(res);
       onProcessed?.(res);
     } catch (err: any) {

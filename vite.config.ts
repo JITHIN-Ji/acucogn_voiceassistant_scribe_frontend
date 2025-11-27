@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 // Configure a dev proxy for convenience: /api -> backend base URL
-const apiTarget = process.env.VITE_API_BASE_URL || 'https://web-application-voice-assitant.onrender.com';
+const apiTarget = process.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
 export default defineConfig({
   server: {

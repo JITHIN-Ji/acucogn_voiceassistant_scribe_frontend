@@ -10,7 +10,7 @@ import type {
   PatientResponse 
 } from '../types';
 
-const baseURL = (import.meta as any).env?.VITE_API_BASE_URL || 'https://web-application-voice-assitant.onrender.com';
+const baseURL = (import.meta as any).env?.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
 // If the app is served by Vite with a proxy, you can set useProxy = true
 const useProxy = false; // set to true to route via /api proxy
@@ -87,10 +87,13 @@ export const api = {
     return res.data;
   },
 
-  async processAudio(file: File, isRealtime: boolean = false): Promise<ProcessAudioResponse> {
+  async processAudio(file: File, isRealtime: boolean = false, patientTokenId?: string): Promise<ProcessAudioResponse> {
     const form = new FormData();
     form.append('audio', file);
     form.append('is_realtime', isRealtime ? 'true' : 'false');
+    if (patientTokenId) {
+      form.append('patient_token_id', patientTokenId);
+    }
     const res = await instance.post('/process_audio', form, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
@@ -121,6 +124,37 @@ export const api = {
 
   async getPatient(tokenId: string): Promise<PatientResponse> {
     const res = await instance.get(`/patients/${tokenId}`);
+    return res.data;
+  },
+
+  async getPatientSoapRecords(patientTokenId: string): Promise<{
+    status: string;
+    patient_token_id: string;
+    soap_records: Array<{
+      id: number;
+      patient_token_id: string;
+      audio_file_name: string;
+      storage_path?: string;
+      transcript: string;
+      original_transcript?: string;
+      soap_sections: Record<string, any>;
+      created_at: string;
+      updated_at: string;
+    }>;
+    total_records: number;
+  }> {
+    const res = await instance.get(`/patient/${patientTokenId}/soap_records`);
+    return res.data;
+  },
+
+  async updateSoapRecord(recordId: number, soapSections: Record<string, string>): Promise<{
+    status: string;
+    message: string;
+    record_id: number;
+  }> {
+    const res = await instance.put(`/soap_record/${recordId}`, {
+      soap_sections: soapSections
+    });
     return res.data;
   },
 };

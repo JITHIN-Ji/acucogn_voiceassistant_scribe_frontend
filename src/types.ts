@@ -8,6 +8,7 @@ export type ProcessAudioResponse = {
   diarized_segments: unknown;
   soap_sections: Record<string, unknown> | string;
   audio_file_name: string;
+  soap_record_id?: number;  // Database record ID if saved
 };
 
 export type ApprovePlanPayload = {

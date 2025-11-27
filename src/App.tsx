@@ -2,7 +2,7 @@ import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { Home } from './pages/Home';
 import { Doctor } from './pages/Doctor';
-// import { Receptionist } from './pages/Receptionist';
+import { Receptionist } from './pages/Receptionist';
 import { User } from './pages/User'; 
 import { Login } from './pages/Login';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -37,7 +37,7 @@ function Navigation() {
         Home
       </Link>
 
-      {/*
+      {
       <Link 
         to="/receptionist" 
         className={`btn ${isActive('/receptionist') ? '' : 'btn-outline'}`}
@@ -46,9 +46,9 @@ function Navigation() {
           backgroundColor: isActive('/receptionist') ? 'var(--btn-bg)' : 'transparent',
         }}
       >
-        Receptionist
+        Admin
       </Link>
-      */}
+      }
 
       {/** User Page button disabled **/}
       {false && (
@@ -72,7 +72,7 @@ function Navigation() {
           backgroundColor: isActive('/doctor') ? 'var(--btn-bg)' : 'transparent',
         }}
       >
-        Doctor Page
+        Doctor 
       </Link>
 
       {/* Account Dropdown */}
@@ -277,7 +277,7 @@ export function App() {
             <Doctor />
           </ProtectedRoute>
         } />
-        {/* <Route path="/receptionist" element={<Receptionist />} /> */}
+        { <Route path="/receptionist" element={<Receptionist />} /> }
         {/* <Route path="/user" element={<User />} /> */}
       </Routes>
     </div>

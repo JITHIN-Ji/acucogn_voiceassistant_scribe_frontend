@@ -117,37 +117,72 @@ export function Receptionist() {
       <div className="hero">
         <h1>Receptionist Portal</h1>
         <p className="subtle subtitle-prominent">Manage patient appointments and communications.</p>
+        {message && (
+          <div
+            style={{
+              background: '#d1fae5',
+              color: '#065f46',
+              padding: '12px 16px',
+              borderRadius: '8px',
+              marginTop: '12px',
+              marginBottom: '16px',
+              fontWeight: 500
+            }}
+          >
+            {message}
+          </div>
+        )}
+
       </div>
       
-      {/* Control row moved below the main heading and styled */}
-      <div style={{
-        display: 'flex',
-        gap: '12px',
-        alignItems: 'center',
-        marginTop: '20px', // Space after hero text
-        marginBottom: '20px', // Space before next section
-        flexWrap: 'wrap' // Allow wrapping on small screens
+      {/* Control row moved below the main heading and styled (centered, same width as Doctor) */}
+      <section className="card" style={{
+        marginBottom: '24px',
+        padding: '20px',
+        backgroundColor: 'rgba(255, 255, 255, 0.02)',
+        border: '1px solid rgba(255, 255, 255, 0.06)',
+        borderRadius: '12px',
+        maxWidth: '1200px',
+        margin: '0 auto 24px'
       }}>
-        <select
-          value={selectedPatient}
-          onChange={(e) => setSelectedPatient(e.target.value)}
-          className="input"
-          style={{ minWidth: '200px', color: selectedPatient ? '#000' : 'var(--text)' }}
-        >
-          <option value="" style={{ color: 'var(--text)' }}>Select Patient</option>
-          {patients.map((patient) => (
-            <option key={patient.token_id} value={patient.token_id} style={{ color: '#000' }}>
-              {patient.name}
-            </option>
-          ))}
-        </select>
-        <button className="btn" onClick={() => setShowForm(true)}>
-          Add Patients
-        </button>
-      </div>
+        <div style={{
+          display: 'flex',
+          gap: '12px',
+          alignItems: 'center',
+          marginTop: '0',
+          flexWrap: 'wrap'
+        }}>
+          <select
+            value={selectedPatient}
+            onChange={(e) => setSelectedPatient(e.target.value)}
+            className="input"
+            style={{ minWidth: '200px', color: selectedPatient ? '#000' : 'var(--text)', width: '100%', maxWidth: '420px', backgroundColor: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '6px', padding: '10px 12px' }}
+          >
+            <option value="" style={{ color: 'var(--text)' }}>Select Patient</option>
+            {patients.map((patient) => (
+              <option key={patient.token_id} value={patient.token_id} style={{ color: '#000' }}>
+                {patient.name}
+              </option>
+            ))}
+          </select>
+          <div style={{ marginLeft: 'auto' }}>
+            <button className="btn" onClick={() => setShowForm(true)}>
+              Add Patient
+            </button>
+          </div>
+        </div>
+      </section>
 
       {selectedPatient && (
-        <section className="card"> {/* Removed redundant marginTop: 16 as margin is added by the div above */}
+        <section className="card" style={{
+          marginBottom: '24px',
+          padding: '20px',
+          backgroundColor: 'rgba(255, 255, 255, 0.02)',
+          border: '1px solid rgba(255, 255, 255, 0.06)',
+          borderRadius: '12px',
+          maxWidth: '1200px',
+          margin: '0 auto 24px'
+        }}> {/* Selected patient info - centered and same width as Doctor */}
           <h3>Selected Patient Information</h3>
           {(() => {
             const patient = patients.find(p => p.token_id === selectedPatient);
@@ -180,13 +215,21 @@ export function Receptionist() {
           justifyContent: 'center',
           alignItems: 'center',
           zIndex: 1000,
+          overflowX: 'hidden',
         }}>
-          <div className="card" style={{
-            maxWidth: '500px',
+            <div className="card" style={{
+            maxWidth: '600px',
             width: '90%',
             maxHeight: '90vh',
             overflowY: 'auto',
             position: 'relative',
+            padding: '20px',
+            paddingLeft: '24px',
+            paddingRight: '24px',
+            boxSizing: 'border-box',
+            backgroundColor: 'rgba(255,255,255,0.02)',
+            border: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: '8px',
           }}>
             <button
               onClick={handleCloseForm}
@@ -216,7 +259,7 @@ export function Receptionist() {
                   value={formData.name}
                   onChange={handleInputChange}
                   className="input"
-                  style={{ width: '100%' }}
+                  style={{ width: '100%', boxSizing: 'border-box', backgroundColor: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '6px', padding: '10px 12px' }}
                   required
                 />
               </div>
@@ -228,7 +271,7 @@ export function Receptionist() {
                   value={formData.address}
                   onChange={handleInputChange}
                   className="input"
-                  style={{ width: '100%' }}
+                  style={{ width: '100%', boxSizing: 'border-box', backgroundColor: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '6px', padding: '10px 12px' }}
                 />
               </div>
               <div style={{ marginBottom: 16 }}>
@@ -239,7 +282,7 @@ export function Receptionist() {
                   value={formData.phone_number}
                   onChange={handleInputChange}
                   className="input"
-                  style={{ width: '100%' }}
+                  style={{ width: '100%', boxSizing: 'border-box', backgroundColor: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '6px', padding: '10px 12px' }}
                 />
               </div>
               <div style={{ marginBottom: 16 }}>
@@ -249,12 +292,12 @@ export function Receptionist() {
                   value={formData.problem}
                   onChange={handleInputChange}
                   className="textarea"
-                  style={{ width: '100%', minHeight: '100px' }}
+                  style={{ width: '100%', boxSizing: 'border-box', minHeight: '100px', backgroundColor: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '6px', padding: '12px' }}
                   rows={4}
                 />
               </div>
               {error && <p style={{ color: '#c92a2a', marginBottom: 12 }}>{error}</p>}
-              {message && <p style={{ color: 'var(--accent)', marginBottom: 12 }}>{message}</p>}
+              
               <div className="row" style={{ marginTop: 16 }}>
                 <button type="submit" className="btn" disabled={loading}>
                   {loading ? 'Saving...' : 'Save'}

@@ -4,6 +4,7 @@ import type { ProcessAudioResponse } from '../types';
 
 type Props = {
   onProcessed?: (res: ProcessAudioResponse) => void;
+  patientTokenId?: string;
 };
 
 // Voice Visualizer component that reacts to actual audio levels
@@ -122,7 +123,7 @@ const VoiceVisualizer = ({ stream }: { stream: MediaStream | null }) => {
 };
 
 
-export function AudioRecorder({ onProcessed }: Props) {
+export function AudioRecorder({ onProcessed, patientTokenId }: Props) {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const [permissionError, setPermissionError] = useState('');
@@ -170,7 +171,7 @@ export function AudioRecorder({ onProcessed }: Props) {
         
         
         try {
-          const res = await api.processAudio(file, true); 
+          const res = await api.processAudio(file, true, patientTokenId); 
           onProcessed?.(res);
         } catch (err) {
           // swallow here; parent can choose to show separate UI if needed
