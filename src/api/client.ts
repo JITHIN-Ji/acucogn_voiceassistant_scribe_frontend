@@ -10,7 +10,7 @@ import type {
   PatientResponse 
 } from '../types';
 
-const baseURL = (import.meta as any).env?.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+const baseURL = (import.meta as any).env?.VITE_API_BASE_URL || 'https://web-application-voice-assitant.onrender.com';
 
 // If the app is served by Vite with a proxy, you can set useProxy = true
 const useProxy = false; // set to true to route via /api proxy
