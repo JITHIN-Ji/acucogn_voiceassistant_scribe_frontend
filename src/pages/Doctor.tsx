@@ -602,14 +602,72 @@ export function Doctor() {
         maxWidth: '1200px',
         margin: '0 auto 24px'
       }}>
-        <section className="card" style={{ flex: '1', minWidth: '350px' }}>
+        <section className="card" style={{ flex: '1', minWidth: '350px', position: 'relative', transition: 'all 0.3s ease' }} onMouseEnter={(e) => {
+          if (!selectedPatient) {
+            const overlay = e.currentTarget.querySelector('.hover-overlay');
+            if (overlay) (overlay as HTMLElement).style.opacity = '1';
+          }
+        }} onMouseLeave={(e) => {
+          const overlay = e.currentTarget.querySelector('.hover-overlay');
+          if (overlay) (overlay as HTMLElement).style.opacity = '0';
+        }}>
           <h2>Option 1: Real-time Recording</h2>
           <AudioRecorder onProcessed={setActiveResult} patientTokenId={selectedPatient} />
+          {!selectedPatient && (
+            <div className="hover-overlay" style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.4)',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              opacity: 0,
+              transition: 'opacity 0.3s ease',
+              cursor: 'not-allowed',
+              pointerEvents: 'none',
+              zIndex: 10
+            }}>
+              <span style={{ color: 'white', fontSize: '1.1rem', fontWeight: '600', textAlign: 'center' }}>Please select a patient</span>
+            </div>
+          )}
         </section>
 
-        <section className="card" style={{ flex: '1', minWidth: '350px' }}>
+        <section className="card" style={{ flex: '1', minWidth: '350px', position: 'relative', transition: 'all 0.3s ease' }} onMouseEnter={(e) => {
+          if (!selectedPatient) {
+            const overlay = e.currentTarget.querySelector('.hover-overlay');
+            if (overlay) (overlay as HTMLElement).style.opacity = '1';
+          }
+        }} onMouseLeave={(e) => {
+          const overlay = e.currentTarget.querySelector('.hover-overlay');
+          if (overlay) (overlay as HTMLElement).style.opacity = '0';
+        }}>
           <h2>Option 2: Upload Audio and Process</h2>
           <AudioUpload onProcessed={setActiveResult} patientTokenId={selectedPatient} />
+          {!selectedPatient && (
+            <div className="hover-overlay" style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.4)',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              opacity: 0,
+              transition: 'opacity 0.3s ease',
+              cursor: 'not-allowed',
+              pointerEvents: 'none',
+              zIndex: 10
+            }}>
+              <span style={{ color: 'white', fontSize: '1.1rem', fontWeight: '600', textAlign: 'center' }}>Please select a patient</span>
+            </div>
+          )}
         </section>
       </div>
 
