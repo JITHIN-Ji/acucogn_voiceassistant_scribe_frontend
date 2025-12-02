@@ -17,6 +17,11 @@ export function AudioUpload({ onProcessed, patientTokenId }: Props) {
     e.preventDefault();
     setError('');
     setResult(null);
+    if (!patientTokenId) {
+      setError('Please choose patient first');
+      alert('Please choose patient first');
+      return;
+    }
     if (!file) {
       setError('Please choose an audio file.');
       return;
@@ -41,8 +46,9 @@ export function AudioUpload({ onProcessed, patientTokenId }: Props) {
             type="file"
             accept="audio/*"
             onChange={(e) => setFile(e.target.files?.[0] || null)}
+            disabled={!patientTokenId}
           />
-          <button type="submit" disabled={loading} style={{ padding: '8px 14px' }}>
+          <button type="submit" disabled={loading || !patientTokenId} style={{ padding: '8px 14px' }}>
             {loading ? 'Processing…' : 'Upload & Process'}
           </button>
         </div>
