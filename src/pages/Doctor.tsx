@@ -306,7 +306,13 @@ export function Doctor() {
     const selected = patients.find(p => p.token_id === patientId);
     if (selected) {
       setSelectedPatientName(selected.name || '');
-      setPatientEmail(selected.phone_number || '');
+      // Do not populate the communication email input with phone numbers.
+      // The field is for email; leave blank unless an email property exists.
+      // Use `email` if provided by backend, otherwise keep empty for doctor to fill.
+      // (Legacy code used phone_number here which caused phone numbers to appear.)
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      setPatientEmail((selected as any).email || '');
       setMessage(`✅ Patient "${selected.name}" selected successfully!`);
       setError('');
       
@@ -727,7 +733,7 @@ export function Doctor() {
           <div className="row" style={{ marginTop: 8, marginBottom: 16, gap: '12px', flexWrap: 'wrap' }}>
             <input
               type="email"
-              placeholder="Patient email (optional)"
+              placeholder="Add patient email"
               value={patientEmail}
               onChange={(e) => setPatientEmail(e.target.value)}
               className="input"
