@@ -132,6 +132,10 @@ export function AudioRecorder({ onProcessed, patientTokenId }: Props) {
   const streamRef = useRef<MediaStream | null>(null);
 
   async function start() {
+    if (!patientTokenId) {
+      alert('Please choose patient first');
+      return;
+    }
     if (recording || loading) return;
 
     setPermissionError('');
@@ -212,8 +216,8 @@ export function AudioRecorder({ onProcessed, patientTokenId }: Props) {
         <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
           <button 
             onClick={start} 
-            disabled={recording || loading} 
-            style={{ padding: '8px 14px', backgroundColor: 'white', color: '#000', border: 'none', borderRadius: '4px', cursor: recording || loading ? 'not-allowed' : 'pointer', opacity: recording || loading ? 0.6 : 1 }} 
+            disabled={recording || loading || !patientTokenId} 
+            style={{ padding: '8px 14px', backgroundColor: 'white', color: '#000', border: 'none', borderRadius: '4px', cursor: recording || loading || !patientTokenId ? 'not-allowed' : 'pointer', opacity: recording || loading || !patientTokenId ? 0.6 : 1 }} 
           >
             Start Recording
           </button>
@@ -237,6 +241,9 @@ export function AudioRecorder({ onProcessed, patientTokenId }: Props) {
         )}
 
         {permissionError && <p style={{ color: '#ff4757', marginTop: 12, marginBottom: 0 }}>{permissionError}</p>}
+        {!patientTokenId && (
+          <p style={{ color: '#ffd43b', marginTop: 12, marginBottom: 0 }}>Please choose a patient before starting real-time recording.</p>
+        )}
       </div>
     </div>
   );
