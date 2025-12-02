@@ -241,9 +241,6 @@ export function AudioRecorder({ onProcessed, patientTokenId }: Props) {
         )}
 
         {permissionError && <p style={{ color: '#ff4757', marginTop: 12, marginBottom: 0 }}>{permissionError}</p>}
-        {!patientTokenId && (
-          <p style={{ color: '#ffd43b', marginTop: 12, marginBottom: 0 }}>Please choose a patient before starting real-time recording.</p>
-        )}
       </div>
     </div>
   );
