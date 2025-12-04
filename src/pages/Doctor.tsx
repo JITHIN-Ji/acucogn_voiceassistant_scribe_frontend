@@ -5,7 +5,7 @@ import type { ApprovePlanPayload, ApprovePlanResponse, ProcessAudioResponse, Pat
 import { AudioRecorder } from '../components/AudioRecorder';
 import { AudioUpload } from '../components/AudioUpload';
 
-// Utility function to download SOAP JSON
+
 function downloadSoap(res: ProcessAudioResponse | null) {
   if (!res) return;
 
@@ -23,7 +23,7 @@ function downloadSoap(res: ProcessAudioResponse | null) {
   URL.revokeObjectURL(url);
 }
 
-// Helper to extract or initialize SOAP sections
+
 function initializeSoapSections(result: ProcessAudioResponse | null): Record<string, string> {
   const soapData = result?.soap_sections;
   let initialSections: Record<string, any> = {};
@@ -54,8 +54,8 @@ async function playAudioFromSupabase(
   setPlayingRecordId: (id: number | null) => void
 ) {
   try {
-    console.log('🎵 Audio playback initiated for:', audioFileName);
-    console.log('🔍 Checking if path is null/empty:', !audioFileName);
+    console.debug('🎵 Audio playback initiated for:', audioFileName);
+    console.debug('🔍 Checking if path is null/empty:', !audioFileName);
     
     if (!audioFileName || audioFileName === 'null' || audioFileName === '') {
       console.error('❌ No audio file path provided');
@@ -63,39 +63,93 @@ async function playAudioFromSupabase(
       return;
     }
     
-    // If audio is already playing and it's the same record, pause and stop it
+    
     if (audioRef && !audioRef.paused && currentPlayingId === recordId) {
-      console.log('⏸️ Pausing and stopping audio');
+      console.debug('⏸️ Pausing and stopping audio');
       audioRef.pause();
       audioRef.currentTime = 0;
       setPlayingRecordId(null);
       return;
     }
     
-    // If different audio is playing, stop it first
+    
     if (audioRef && !audioRef.paused) {
-      console.log('🛑 Stopping previous audio');
+      console.debug('🛑 Stopping previous audio');
       audioRef.pause();
       audioRef.currentTime = 0;
     }
 
-    // Try to get the public URL from Supabase client
-    try {
+    
+try {
+  if (audioFileName.includes('/')) {
+    const streamUrl = api.getAudioUrl(audioFileName);
+    console.debug('🔗 Using API client for audio URL:', streamUrl);
+
+    if (audioRef) {
+      audioRef.src = streamUrl;
+      audioRef.crossOrigin = 'anonymous';
+
+      audioRef.onerror = (e) => {
+        console.error('❌ Audio loading error:', e);
+        console.error('❌ Audio error code:', audioRef.error?.code);
+        alert('Failed to load audio file. The file may not exist or is not accessible.');
+        setPlayingRecordId(null);
+      };
+
+      audioRef.oncanplay = () => {
+        console.debug('✅ Audio loaded successfully, playing now');
+      };
+
+      setPlayingRecordId(recordId);
+
+      const playPromise = audioRef.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => console.debug('▶️ Audio is now playing')).catch((error) => { 
+          console.error('❌ Playback error:', error); 
+          setPlayingRecordId(null); 
+        });
+      }
+    } else {
+      const audio = new Audio(streamUrl);
+      audio.crossOrigin = 'anonymous';
+
+      audio.onerror = (e) => {
+        console.error('❌ Audio loading error:', e);
+        console.error('❌ Audio error code:', audio.error?.code);
+        setPlayingRecordId(null);
+      };
+
+      audio.oncanplay = () => console.debug('✅ Audio loaded successfully, playing now');
+      audio.onended = () => { 
+        console.debug('🏁 Audio playback ended'); 
+        setPlayingRecordId(null); 
+      };
+
+      setPlayingRecordId(recordId);
+      setAudioRef(audio);
+
+      const playPromise = audio.play();
+      if (playPromise !== undefined) playPromise.catch((error) => { 
+        console.error('❌ Playback error:', error); 
+        setPlayingRecordId(null); 
+      });
+    }
+
+    return;
+  }
+
+      
       const { supabaseClient } = await import('../api/supabaseClient');
-      
-      const { data } = supabaseClient
-        .storage
-        .from('patient_db')
-        .getPublicUrl(audioFileName);
-      
+      const { data } = supabaseClient.storage.from('patient_db').getPublicUrl(audioFileName);
+
       if (data && data.publicUrl) {
-        console.log('🔗 Supabase public URL:', data.publicUrl);
-        
+        console.debug('🔗 Supabase public URL:', data.publicUrl);
+
         if (audioRef) {
-          console.log('📝 Using existing audio element');
+          console.debug('📝 Using existing audio element');
           audioRef.src = data.publicUrl;
           audioRef.crossOrigin = 'anonymous';
-          
+
           audioRef.onerror = (e) => {
             console.error('❌ Audio loading error:', e);
             console.error('❌ Audio error code:', audioRef.error?.code);
@@ -103,116 +157,65 @@ async function playAudioFromSupabase(
             alert('Failed to load audio file. The file may not exist or is not accessible.');
             setPlayingRecordId(null);
           };
-          
+
           audioRef.oncanplay = () => {
-            console.log('✅ Audio loaded successfully, playing now');
+            console.debug('✅ Audio loaded successfully, playing now');
           };
-          
-          audioRef.onloadstart = () => {
-            console.log('📥 Audio loading started');
-          };
-          
-          // Update state to indicate this record is now playing
+
           setPlayingRecordId(recordId);
-          
-          // Try to play
+
           const playPromise = audioRef.play();
-          if (playPromise !== undefined) {
-            playPromise
-              .then(() => {
-                console.log('▶️ Audio is now playing');
-              })
-              .catch((error) => {
-                console.error('❌ Playback error:', error);
-                setPlayingRecordId(null);
-              });
-          }
+          if (playPromise !== undefined) playPromise.catch((error) => { console.error('❌ Playback error:', error); setPlayingRecordId(null); });
         } else {
-          console.log('🎙️ Creating new audio element');
+          console.debug('🎙️ Creating new audio element');
           const audio = new Audio(data.publicUrl);
           audio.crossOrigin = 'anonymous';
-          
+
           audio.onerror = (e) => {
             console.error('❌ Audio loading error:', e);
             console.error('❌ Audio error code:', audio.error?.code);
             setPlayingRecordId(null);
           };
-          
-          audio.oncanplay = () => {
-            console.log('✅ Audio loaded successfully, playing now');
-          };
-          
-          audio.onended = () => {
-            console.log('🏁 Audio playback ended');
-            setPlayingRecordId(null);
-          };
-          
-          // Update state to indicate this record is now playing
+
+          audio.oncanplay = () => console.debug('✅ Audio loaded successfully, playing now');
+          audio.onended = () => { console.debug('🏁 Audio playback ended'); setPlayingRecordId(null); };
+
           setPlayingRecordId(recordId);
           setAudioRef(audio);
-          
+
           const playPromise = audio.play();
-          if (playPromise !== undefined) {
-            playPromise
-              .then(() => {
-                console.log('▶️ Audio is now playing');
-              })
-              .catch((error) => {
-                console.error('❌ Playback error:', error);
-                setPlayingRecordId(null);
-              });
-          }
+          if (playPromise !== undefined) playPromise.catch((error) => { console.error('❌ Playback error:', error); setPlayingRecordId(null); });
         }
       } else {
         console.error('❌ Could not get public URL from Supabase');
       }
     } catch (supabaseError) {
-      console.error('⚠️ Error using Supabase client, trying direct URL:', supabaseError);
+      console.error('⚠️ Error using Supabase client or backend stream:', supabaseError);
       
-      // Fallback: construct URL directly
       const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL;
       if (!supabaseUrl) {
         console.error('❌ Supabase URL not configured');
         alert('Supabase URL not configured. Please check environment variables.');
         return;
       }
-      
+
       const publicUrl = `${supabaseUrl}/storage/v1/object/public/patient_db/${audioFileName}`;
-      console.log('🔗 Fallback constructed URL:', publicUrl);
-      
+      console.debug('🔗 Fallback constructed URL:', publicUrl);
+
       if (audioRef) {
         audioRef.src = publicUrl;
         audioRef.crossOrigin = 'anonymous';
-        
-        audioRef.onended = () => {
-          console.log('🏁 Audio playback ended');
-          setPlayingRecordId(null);
-        };
-        
-        // Update state to indicate this record is now playing
+
+        audioRef.onended = () => { console.debug('🏁 Audio playback ended'); setPlayingRecordId(null); };
         setPlayingRecordId(recordId);
-        
-        audioRef.play().catch((error) => {
-          console.error('❌ Playback error:', error);
-          setPlayingRecordId(null);
-        });
+        audioRef.play().catch((error) => { console.error('❌ Playback error:', error); setPlayingRecordId(null); });
       } else {
         const audio = new Audio(publicUrl);
         audio.crossOrigin = 'anonymous';
-        
-        audio.onended = () => {
-          console.log('🏁 Audio playback ended');
-          setPlayingRecordId(null);
-        };
-        
-        // Update state to indicate this record is now playing
+        audio.onended = () => { console.debug('🏁 Audio playback ended'); setPlayingRecordId(null); };
         setPlayingRecordId(recordId);
         setAudioRef(audio);
-        
-        audio.play().catch((error) => {
-          console.error('❌ Playback error:', error);
-          setPlayingRecordId(null);
-        });
+        audio.play().catch((error) => { console.error('❌ Playback error:', error); setPlayingRecordId(null); });
       }
     }
   } catch (error) {
@@ -275,7 +278,7 @@ export function Doctor() {
       const newSections = initializeSoapSections(activeResult);
       setSoapEditable(newSections);
 
-      // Extract SOAP record ID if it was just saved to database
+      
       if ('soap_record_id' in activeResult) {
         setCurrentSoapRecordId((activeResult as any).soap_record_id);
       }
@@ -306,11 +309,12 @@ export function Doctor() {
     const selected = patients.find(p => p.token_id === patientId);
     if (selected) {
       setSelectedPatientName(selected.name || '');
-      setPatientEmail(selected.phone_number || '');
+      
+      setPatientEmail((selected as any).email || '');
       setMessage(`✅ Patient "${selected.name}" selected successfully!`);
       setError('');
       
-      // Load SOAP history for this patient
+      
       loadSoapHistory(patientId);
     }
   };
@@ -320,7 +324,7 @@ export function Doctor() {
     try {
       const response = await api.getPatientSoapRecords(patientTokenId);
       if (response.status === 'success' && response.soap_records) {
-        // Normalize soap_sections: sometimes returned as JSON string from Supabase
+        
         const normalized = response.soap_records.map((r: any) => {
           let soapSections = r.soap_sections;
           if (typeof soapSections === 'string') {
@@ -332,7 +336,7 @@ export function Doctor() {
           }
           soapSections = soapSections || {};
 
-          // Normalize possible key names to S/O/A/P
+          
           const S = soapSections.S || soapSections.Subjective || soapSections.subjective || '';
           const O = soapSections.O || soapSections.Objective || soapSections.objective || '';
           const A = soapSections.A || soapSections.Assessment || soapSections.assessment || '';
@@ -374,7 +378,7 @@ export function Doctor() {
       console.error('Failed to save SOAP to localStorage:', e);
     }
 
-    // Save to database if we have a record ID
+    
     if (currentSoapRecordId) {
       saveSOAPToDatabase(newSoapObject);
     } else {
@@ -513,7 +517,7 @@ export function Doctor() {
 
   return (
     <div style={{ paddingBottom: '40px', paddingTop: '60px' }}>
-      {/* Message/Error Display at Top */}
+      
       {message && (
         <div style={{
           backgroundColor: 'rgba(46, 213, 115, 0.15)',
@@ -539,7 +543,7 @@ export function Doctor() {
         </div>
       )}
 
-      {/* Patient Selection Dropdown - FIXED at top */}
+      
       <section className="card" style={{ 
         marginBottom: '24px',
         padding: '20px',
@@ -585,7 +589,7 @@ export function Doctor() {
         )}
       </section>
 
-      {/* Option 1 & Option 2 - FIXED layout, side by side */}
+      
       <div style={{ 
         display: 'flex',
         justifyContent: 'center',
@@ -596,18 +600,76 @@ export function Doctor() {
         maxWidth: '1200px',
         margin: '0 auto 24px'
       }}>
-        <section className="card" style={{ flex: '1', minWidth: '350px' }}>
+        <section className="card" style={{ flex: '1', minWidth: '350px', position: 'relative', transition: 'all 0.3s ease' }} onMouseEnter={(e) => {
+          if (!selectedPatient) {
+            const overlay = e.currentTarget.querySelector('.hover-overlay');
+            if (overlay) (overlay as HTMLElement).style.opacity = '1';
+          }
+        }} onMouseLeave={(e) => {
+          const overlay = e.currentTarget.querySelector('.hover-overlay');
+          if (overlay) (overlay as HTMLElement).style.opacity = '0';
+        }}>
           <h2>Option 1: Real-time Recording</h2>
           <AudioRecorder onProcessed={setActiveResult} patientTokenId={selectedPatient} />
+          {!selectedPatient && (
+            <div className="hover-overlay" style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.4)',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              opacity: 0,
+              transition: 'opacity 0.3s ease',
+              cursor: 'not-allowed',
+              pointerEvents: 'none',
+              zIndex: 10
+            }}>
+              <span style={{ color: 'white', fontSize: '1.1rem', fontWeight: '600', textAlign: 'center' }}>Please select a patient</span>
+            </div>
+          )}
         </section>
 
-        <section className="card" style={{ flex: '1', minWidth: '350px' }}>
+        <section className="card" style={{ flex: '1', minWidth: '350px', position: 'relative', transition: 'all 0.3s ease' }} onMouseEnter={(e) => {
+          if (!selectedPatient) {
+            const overlay = e.currentTarget.querySelector('.hover-overlay');
+            if (overlay) (overlay as HTMLElement).style.opacity = '1';
+          }
+        }} onMouseLeave={(e) => {
+          const overlay = e.currentTarget.querySelector('.hover-overlay');
+          if (overlay) (overlay as HTMLElement).style.opacity = '0';
+        }}>
           <h2>Option 2: Upload Audio and Process</h2>
           <AudioUpload onProcessed={setActiveResult} patientTokenId={selectedPatient} />
+          {!selectedPatient && (
+            <div className="hover-overlay" style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.4)',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              opacity: 0,
+              transition: 'opacity 0.3s ease',
+              cursor: 'not-allowed',
+              pointerEvents: 'none',
+              zIndex: 10
+            }}>
+              <span style={{ color: 'white', fontSize: '1.1rem', fontWeight: '600', textAlign: 'center' }}>Please select a patient</span>
+            </div>
+          )}
         </section>
       </div>
 
-      {/* New Result Sections - Shows when file is processed */}
+      
       {activeResult && (
         <section className="card transcript-section" style={{ 
           marginTop: 24,
@@ -727,7 +789,7 @@ export function Doctor() {
           <div className="row" style={{ marginTop: 8, marginBottom: 16, gap: '12px', flexWrap: 'wrap' }}>
             <input
               type="email"
-              placeholder="Patient email (optional)"
+              placeholder="Add patient email"
               value={patientEmail}
               onChange={(e) => setPatientEmail(e.target.value)}
               className="input"
@@ -819,7 +881,7 @@ export function Doctor() {
         </section>
       )}
 
-      {/* SOAP History Section - Shows below result when records exist */}
+      
       {selectedPatient && soapHistory.length > 0 && (
         <section className="card" style={{
           marginBottom: '24px',
@@ -856,7 +918,7 @@ export function Doctor() {
                   </h4>
                 </div>
                 
-                {/* SOAP Sections */}
+                
                 <div style={{ color: '#bbb', fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '12px' }}>
                   <div style={{ marginBottom: '8px' }}>
                     <strong style={{ color: '#70d6ff' }}>S (Subjective):</strong> {record.soap_sections?.S || 'N/A'}
@@ -872,7 +934,7 @@ export function Doctor() {
                   </div>
                 </div>
 
-                {/* Transcript and Play Buttons */}
+                
                 <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap' }}>
                   <button
                     className="btn btn-outline"
@@ -884,13 +946,12 @@ export function Doctor() {
                   <button
                     className="btn"
                     onClick={async () => {
-                      // Use storage_path if available, otherwise fall back to audio_file_name
+                      
                       const audioPath = record.storage_path || record.audio_file_name;
-                      console.log('🎯 Play button clicked for record:', record.id);
-                      console.log('📦 storage_path:', record.storage_path);
-                      console.log('📦 audio_file_name:', record.audio_file_name);
-                      console.log('📦 Final audio path used:', audioPath);
-                      console.log('📋 Full Record data:', JSON.stringify(record, null, 2));
+                      console.debug('🎯 Play button clicked for record:', record.id);
+                      console.debug('📦 storage_path:', record.storage_path);
+                      console.debug('📦 audio_file_name:', record.audio_file_name);
+                      console.debug('📦 Final audio path used:', audioPath);
                       
                       await playAudioFromSupabase(
                         audioPath, 
@@ -907,7 +968,7 @@ export function Doctor() {
                   </button>
                 </div>
 
-                {/* Transcript Section - Shown when expanded */}
+              
                 {expandedTranscript === record.id && record.transcript && (
                   <div style={{ 
                     color: '#ddd', 

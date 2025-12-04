@@ -14,7 +14,7 @@ export function Home() {
     const video = videoRef.current;
     if (!video) return;
 
-    // Start with muted so autoplay works
+    
     video.muted = true;
 
     const playPromise = video.play();
@@ -22,7 +22,7 @@ export function Home() {
     if (playPromise !== undefined) {
       playPromise
         .then(() => {
-          // Video is playing, now try to unmute after a short delay
+          
           setTimeout(() => {
             video.muted = false;
             video.play().catch(() => {

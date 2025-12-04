@@ -62,7 +62,7 @@ export function Login() {
           width: '100%',
           textAlign: 'center'
         }}>
-          {/* Logo/Title Section */}
+          
           <div style={{ marginBottom: '30px' }}>
             <h1 style={{ 
               marginBottom: '10px', 

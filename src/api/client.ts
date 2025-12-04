@@ -12,14 +12,14 @@ import type {
 
 const baseURL = (import.meta as any).env?.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
-// If the app is served by Vite with a proxy, you can set useProxy = true
-const useProxy = false; // set to true to route via /api proxy
+
+const useProxy = false; 
 
 const instance = axios.create({
   baseURL: useProxy ? '/api' : baseURL,
 });
 
-// Add request interceptor to include auth token in all requests
+
 instance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('auth_token');
@@ -33,21 +33,21 @@ instance.interceptors.request.use(
   }
 );
 
-// Add response interceptor to handle 401 errors (expired/invalid tokens)
+
 instance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token is invalid or expired
+      
       localStorage.removeItem('auth_token');
-      // Redirect to login page
+      
       window.location.href = '/login';
     }
     return Promise.reject(error);
   }
 );
 
-// Auth API endpoints
+
 export const authApi = {
   async googleAuth(googleToken: string): Promise<{
     status: string;
@@ -80,7 +80,7 @@ export const authApi = {
   },
 };
 
-// Main API endpoints
+
 export const api = {
   async getRoot(): Promise<RootResponse> {
     const res = await instance.get('/');
@@ -157,4 +157,11 @@ export const api = {
     });
     return res.data;
   },
+
+  getAudioUrl(storagePath: string): string {
+  
+  const base = useProxy ? '/api' : baseURL;
+  return `${base}/download_audio?storage_path=${encodeURIComponent(storagePath)}`;
+},
 };
+

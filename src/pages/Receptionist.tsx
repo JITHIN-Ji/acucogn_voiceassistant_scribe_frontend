@@ -3,11 +3,11 @@ import { useState, useEffect, useRef } from 'react';
 import { api } from '../api/client';
 import type { Patient, CreatePatientPayload } from '../types';
 
-// Generate or get session ID from localStorage
+
 function getSessionId(): string {
   let sessionId = localStorage.getItem('session_id');
   if (!sessionId) {
-    sessionId = Math.random().toString(36).substring(2, 10); // 8 character ID
+    sessionId = Math.random().toString(36).substring(2, 10); 
     localStorage.setItem('session_id', sessionId);
   }
   return sessionId;
@@ -16,7 +16,7 @@ function getSessionId(): string {
 export function Receptionist() {
   const sessionIdRef = useRef<string>(getSessionId());
   
-  // Apply background image + gradient for Receptionist page
+  
   useEffect(() => {
     document.body.classList.add('page-background', 'receptionist-page-bg');
     return () => {
@@ -30,7 +30,7 @@ export function Receptionist() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
-  // Form state
+  
   const [formData, setFormData] = useState<CreatePatientPayload>({
     name: '',
     address: '',
@@ -38,14 +38,14 @@ export function Receptionist() {
     problem: '',
   });
 
-  // Load patients on mount
+  
   useEffect(() => {
     loadPatients();
   }, []);
 
   const loadPatients = async () => {
     try {
-      // Send session_id with request
+      
       const response = await api.getPatients(sessionIdRef.current);
       if (response.status === 'success' && response.patients) {
         setPatients(response.patients);
@@ -77,7 +77,7 @@ export function Receptionist() {
     }
 
     try {
-      // Send session_id with request
+      
       const response = await api.createPatient({ ...formData, session_id: sessionIdRef.current });
       if (response.status === 'success') {
         setMessage('Patient saved successfully!');
@@ -88,7 +88,7 @@ export function Receptionist() {
           problem: '',
         });
         setShowForm(false);
-        await loadPatients(); // Reload patients list
+        await loadPatients(); 
       } else {
         setError(response.message || 'Failed to save patient');
       }
@@ -135,7 +135,7 @@ export function Receptionist() {
 
       </div>
       
-      {/* Control row moved below the main heading and styled (centered, same width as Doctor) */}
+      
       <section className="card" style={{
         marginBottom: '24px',
         padding: '20px',
@@ -182,7 +182,7 @@ export function Receptionist() {
           borderRadius: '12px',
           maxWidth: '1200px',
           margin: '0 auto 24px'
-        }}> {/* Selected patient info - centered and same width as Doctor */}
+        }}> 
           <h3>Selected Patient Information</h3>
           {(() => {
             const patient = patients.find(p => p.token_id === selectedPatient);
@@ -202,7 +202,7 @@ export function Receptionist() {
         </section>
       )}
 
-      {/* Patient Form Modal */}
+      
       {showForm && (
         <div style={{
           position: 'fixed',
