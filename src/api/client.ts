@@ -157,7 +157,7 @@ export const api = {
     });
     return res.data;
   },
-<<<<<<< HEAD
+
 
   getAudioUrl(storagePath: string): string {
   
@@ -166,6 +166,4 @@ export const api = {
 },
 };
 
-=======
-};
->>>>>>> bf9c6b541ed57de9e1558dab3d4c8db2b1677a16
+
