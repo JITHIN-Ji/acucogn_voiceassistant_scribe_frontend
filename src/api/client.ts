@@ -10,7 +10,7 @@ import type {
   PatientResponse 
 } from '../types';
 
-const baseURL = (import.meta as any).env?.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+const baseURL = (import.meta as any).env?.VITE_API_BASE_URL || 'https://web-application-voice-assitant.onrender.com';
 
 
 const useProxy = false; 
@@ -157,6 +157,7 @@ export const api = {
     });
     return res.data;
   },
+<<<<<<< HEAD
 
   getAudioUrl(storagePath: string): string {
   
@@ -165,3 +166,6 @@ export const api = {
 },
 };
 
+=======
+};
+>>>>>>> bf9c6b541ed57de9e1558dab3d4c8db2b1677a16
