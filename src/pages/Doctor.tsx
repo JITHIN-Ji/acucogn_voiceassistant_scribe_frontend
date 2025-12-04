@@ -310,6 +310,7 @@ export function Doctor() {
     if (selected) {
       setSelectedPatientName(selected.name || '');
 
+
       setPatientEmail((selected as any).email || '');
       setMessage(`✅ Patient "${selected.name}" selected successfully!`);
       setError('');

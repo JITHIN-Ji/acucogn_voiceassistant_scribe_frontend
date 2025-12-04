@@ -158,13 +158,13 @@ export const api = {
     return res.data;
   },
 
+
   getAudioUrl(storagePath: string): string {
   
   const base = useProxy ? '/api' : baseURL;
   return `${base}/download_audio?storage_path=${encodeURIComponent(storagePath)}`;
 },
 };
-
 
 
 
