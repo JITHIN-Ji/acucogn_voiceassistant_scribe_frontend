@@ -40,7 +40,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data = await authApi.verifyToken();
       
       if (data.status === 'success') {
-        setUser(data.user);
+        setUser({
+          email: data.user.email,
+          name: data.user.name,
+          picture: data.user.picture || '',
+        });
         setToken(token);
       } else {
         // Token is invalid, clear it
@@ -61,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = (newToken: string) => {
     localStorage.setItem('auth_token', newToken);
     setToken(newToken);
-    
+
     // Decode token to get user info
     try {
       const decoded: any = jwtDecode(newToken);

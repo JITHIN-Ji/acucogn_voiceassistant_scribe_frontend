@@ -25,7 +25,7 @@ function Navigation() {
       gap: '15px',
       position: 'relative'
     }}>
-      {/* Navigation buttons */}
+      {/* Navigation buttons - All visible to all users */}
       <Link 
         to="/" 
         className={`btn ${isActive('/') ? '' : 'btn-outline'}`}
@@ -37,7 +37,7 @@ function Navigation() {
         Home
       </Link>
 
-      {
+      {/* Admin link - visible to all */}
       <Link 
         to="/receptionist" 
         className={`btn ${isActive('/receptionist') ? '' : 'btn-outline'}`}
@@ -48,22 +48,8 @@ function Navigation() {
       >
         Admin
       </Link>
-      }
 
-      {/** User Page button disabled **/}
-      {false && (
-        <Link 
-          to="/user" 
-          className={`btn ${isActive('/user') ? '' : 'btn-outline'}`}
-          style={{ 
-            padding: '8px 14px',
-            backgroundColor: isActive('/user') ? 'var(--btn-bg)' : 'transparent',
-          }}
-        >
-          User Page
-        </Link>
-      )}
-      
+      {/* Doctor link - visible to all */}
       <Link 
         to="/doctor" 
         className={`btn ${isActive('/doctor') ? '' : 'btn-outline'}`}
@@ -133,46 +119,6 @@ function Navigation() {
                 padding: '16px',
                 animation: 'slideDown 0.2s ease-out'
               }}>
-                {/* User Info Section */}
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  paddingBottom: '16px',
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-                  marginBottom: '16px'
-                }}>
-                  {user.picture && (
-                    <img 
-                      src={user.picture} 
-                      alt={user.name}
-                      style={{
-                        width: '48px',
-                        height: '48px',
-                        borderRadius: '50%',
-                        border: '2px solid rgba(255, 255, 255, 0.2)'
-                      }}
-                    />
-                  )}
-                  <div style={{ flex: 1 }}>
-                    <div style={{ 
-                      fontWeight: '600', 
-                      fontSize: '16px',
-                      marginBottom: '4px',
-                      color: 'var(--text-color)'
-                    }}>
-                      {user.name}
-                    </div>
-                    <div style={{ 
-                      fontSize: '13px',
-                      color: 'var(--text-secondary)',
-                      wordBreak: 'break-word'
-                    }}>
-                      {user.email}
-                    </div>
-                  </div>
-                </div>
-
                 {/* Account Details */}
                 <div style={{ marginBottom: '16px' }}>
                   <div style={{
@@ -185,29 +131,30 @@ function Navigation() {
                   }}>
                     Account Details
                   </div>
-                  
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <div style={{
-                      padding: '8px 12px',
-                      backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                      borderRadius: '6px',
-                      fontSize: '13px'
+                      padding: '12px',
+                      backgroundColor: '#ffffff',
+                      borderRadius: '10px',
+                      fontSize: '13px',
+                      boxShadow: '0 6px 18px rgba(2,6,23,0.08)'
                     }}>
-                      <div style={{ color: 'var(--text-secondary)', marginBottom: '2px' }}>Email</div>
-                      <div style={{ color: 'var(--text-color)' }}>{user.email}</div>
-                    </div>
-                    
-                    <div style={{
-                      padding: '8px 12px',
-                      backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                      borderRadius: '6px',
-                      fontSize: '13px'
-                    }}>
-                      <div style={{ color: 'var(--text-secondary)', marginBottom: '2px' }}>Name</div>
-                      <div style={{ color: 'var(--text-color)' }}>{user.name}</div>
+                      <div style={{ color: 'rgba(16,24,40,0.6)', marginBottom: '6px', fontSize: 12 }}>Email</div>
+                      <div style={{ color: 'rgba(2,6,23,0.9)', fontWeight: 600 }}>{user.email}</div>
                     </div>
 
-                    
+                    <div style={{
+                      padding: '12px',
+                      backgroundColor: '#ffffff',
+                      borderRadius: '10px',
+                      fontSize: '13px',
+                      boxShadow: '0 6px 18px rgba(2,6,23,0.06)'
+                    }}>
+                      <div style={{ color: 'rgba(16,24,40,0.6)', marginBottom: '6px', fontSize: 12 }}>Name</div>
+                      <div style={{ color: 'rgba(2,6,23,0.9)', fontWeight: 600 }}>{user.name}</div>
+                    </div>
+
                   </div>
                 </div>
 
@@ -221,10 +168,12 @@ function Navigation() {
                   style={{
                     width: '100%',
                     padding: '10px',
-                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                    color: '#ef4444',
-                    border: '1px solid rgba(239, 68, 68, 0.3)',
-                    fontWeight: '500'
+                    background: 'linear-gradient(90deg, #ef4444 0%, #fb7185 100%)',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: 8,
+                    fontWeight: 600,
+                    boxShadow: '0 8px 30px rgba(239,68,68,0.12)'
                   }}
                 >
                   Logout
@@ -277,7 +226,11 @@ export function App() {
             <Doctor />
           </ProtectedRoute>
         } />
-        { <Route path="/receptionist" element={<Receptionist />} /> }
+        <Route path="/receptionist" element={
+          <ProtectedRoute>
+            <Receptionist />
+          </ProtectedRoute>
+        } />
         {/* <Route path="/user" element={<User />} /> */}
       </Routes>
     </div>

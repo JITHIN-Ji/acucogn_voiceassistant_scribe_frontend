@@ -30,6 +30,7 @@ export type ApprovePlanResponse = {
     status?: string;
     result?: unknown;
     message?: string;
+    error?: string;
   };
 };
 

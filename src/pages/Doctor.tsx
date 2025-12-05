@@ -507,10 +507,21 @@ export function Doctor() {
         email_content: finalEmailContent,
       };
 
-      await api.approvePlan(payload);
+      const resp: ApprovePlanResponse = await api.approvePlan(payload);
+      
+      // Check if appointment sending was successful
+      const appointmentSending = resp.appointment_sending;
+      if (appointmentSending?.status === 'error') {
+        const errorMsg = appointmentSending?.error || 'Failed to send email';
+        setError(`❌ Email sending failed`);
+        setSendLoading(false);
+        return;
+      }
+      
       setMessage('✅ Email sent successfully with the latest edited version.');
     } catch (e: any) {
-      setError(e?.response?.data?.detail || 'Email sending failed');
+      const errorDetail = e?.response?.data?.detail || e?.response?.data?.message || 'Email sending failed';
+      setError(`❌ ${errorDetail}`);
     } finally {
       setSendLoading(false);
     }
