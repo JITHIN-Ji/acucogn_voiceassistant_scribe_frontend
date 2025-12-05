@@ -4,10 +4,10 @@ import type { ProcessAudioResponse } from '../types';
 
 type Props = {
   onProcessed?: (res: ProcessAudioResponse) => void;
-  patientTokenId?: string;
+  patientId?: string;
 };
 
-export function AudioUpload({ onProcessed, patientTokenId }: Props) {
+export function AudioUpload({ onProcessed, patientId }: Props) {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ProcessAudioResponse | null>(null);
@@ -17,7 +17,7 @@ export function AudioUpload({ onProcessed, patientTokenId }: Props) {
     e.preventDefault();
     setError('');
     setResult(null);
-    if (!patientTokenId) {
+    if (!patientId) {
       setError('Please choose patient first');
       alert('Please choose patient first');
       return;
@@ -28,7 +28,7 @@ export function AudioUpload({ onProcessed, patientTokenId }: Props) {
     }
     try {
       setLoading(true);
-      const res = await api.processAudio(file, false, patientTokenId);
+      const res = await api.processAudio(file, false, patientId ? Number(patientId) : undefined);
       setResult(res);
       onProcessed?.(res);
     } catch (err: any) {
@@ -46,9 +46,9 @@ export function AudioUpload({ onProcessed, patientTokenId }: Props) {
             type="file"
             accept="audio/*"
             onChange={(e) => setFile(e.target.files?.[0] || null)}
-            disabled={!patientTokenId}
+            disabled={!patientId}
           />
-          <button type="submit" disabled={loading || !patientTokenId} style={{ padding: '8px 14px' }}>
+          <button type="submit" disabled={loading || !patientId} style={{ padding: '8px 14px' }}>
             {loading ? 'Processing…' : 'Upload & Process'}
           </button>
         </div>

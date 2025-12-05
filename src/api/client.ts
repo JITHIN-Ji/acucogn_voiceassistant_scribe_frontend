@@ -87,12 +87,12 @@ export const api = {
     return res.data;
   },
 
-  async processAudio(file: File, isRealtime: boolean = false, patientTokenId?: string): Promise<ProcessAudioResponse> {
+  async processAudio(file: File, isRealtime: boolean = false, patientId?: number): Promise<ProcessAudioResponse> {
     const form = new FormData();
     form.append('audio', file);
     form.append('is_realtime', isRealtime ? 'true' : 'false');
-    if (patientTokenId) {
-      form.append('patient_token_id', patientTokenId);
+    if (typeof patientId !== 'undefined' && patientId !== null) {
+      form.append('patient_id', String(patientId));
     }
     const res = await instance.post('/process_audio', form, {
       headers: { 'Content-Type': 'multipart/form-data' },
@@ -127,12 +127,12 @@ export const api = {
     return res.data;
   },
 
-  async getPatientSoapRecords(patientTokenId: string): Promise<{
+  async getPatientSoapRecords(patientId: number): Promise<{
     status: string;
-    patient_token_id: string;
+    patient_id: number;
     soap_records: Array<{
       id: number;
-      patient_token_id: string;
+      patient_id: number;
       audio_file_name: string;
       storage_path?: string;
       transcript: string;
@@ -143,7 +143,7 @@ export const api = {
     }>;
     total_records: number;
   }> {
-    const res = await instance.get(`/patient/${patientTokenId}/soap_records`);
+    const res = await instance.get(`/patient/${patientId}/soap_records`);
     return res.data;
   },
 

@@ -306,7 +306,7 @@ export function Doctor() {
 
   const handlePatientSelect = (patientId: string) => {
     setSelectedPatient(patientId);
-    const selected = patients.find(p => p.token_id === patientId);
+    const selected = patients.find(p => String(p.id) === patientId);
     if (selected) {
       setSelectedPatientName(selected.name || '');
 
@@ -320,10 +320,10 @@ export function Doctor() {
     }
   };
 
-  const loadSoapHistory = async (patientTokenId: string) => {
+  const loadSoapHistory = async (patientId: string) => {
     setLoadingHistory(true);
     try {
-      const response = await api.getPatientSoapRecords(patientTokenId);
+      const response = await api.getPatientSoapRecords(Number(patientId));
       if (response.status === 'success' && response.soap_records) {
         
         const normalized = response.soap_records.map((r: any) => {
@@ -585,7 +585,7 @@ export function Doctor() {
         >
           <option value="">-- Choose a Patient --</option>
           {patients.map((patient) => (
-            <option key={patient.token_id} value={patient.token_id}>
+            <option key={patient.id} value={String(patient.id)}>
               {patient.name}
             </option>
           ))}
@@ -622,7 +622,7 @@ export function Doctor() {
           if (overlay) (overlay as HTMLElement).style.opacity = '0';
         }}>
           <h2>Option 1: Real-time Recording</h2>
-          <AudioRecorder onProcessed={setActiveResult} patientTokenId={selectedPatient} />
+          <AudioRecorder onProcessed={setActiveResult} patientId={selectedPatient} />
           {!selectedPatient && (
             <div className="hover-overlay" style={{
               position: 'absolute',
@@ -656,7 +656,7 @@ export function Doctor() {
           if (overlay) (overlay as HTMLElement).style.opacity = '0';
         }}>
           <h2>Option 2: Upload Audio and Process</h2>
-          <AudioUpload onProcessed={setActiveResult} patientTokenId={selectedPatient} />
+          <AudioUpload onProcessed={setActiveResult} patientId={selectedPatient} />
           {!selectedPatient && (
             <div className="hover-overlay" style={{
               position: 'absolute',

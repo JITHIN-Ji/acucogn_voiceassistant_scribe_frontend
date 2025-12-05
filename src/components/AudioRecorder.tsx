@@ -4,7 +4,7 @@ import type { ProcessAudioResponse } from '../types';
 
 type Props = {
   onProcessed?: (res: ProcessAudioResponse) => void;
-  patientTokenId?: string;
+  patientId?: string;
 };
 
 // Voice Visualizer component that reacts to actual audio levels
@@ -123,7 +123,7 @@ const VoiceVisualizer = ({ stream }: { stream: MediaStream | null }) => {
 };
 
 
-export function AudioRecorder({ onProcessed, patientTokenId }: Props) {
+export function AudioRecorder({ onProcessed, patientId }: Props) {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const [permissionError, setPermissionError] = useState('');
@@ -132,8 +132,8 @@ export function AudioRecorder({ onProcessed, patientTokenId }: Props) {
   const streamRef = useRef<MediaStream | null>(null);
 
   async function start() {
-    if (!patientTokenId) {
-      alert('Please choose patient first');
+      if (!patientId) {
+        alert('Please choose patient first');
       return;
     }
     if (recording || loading) return;
@@ -175,7 +175,7 @@ export function AudioRecorder({ onProcessed, patientTokenId }: Props) {
         
         
         try {
-          const res = await api.processAudio(file, true, patientTokenId); 
+          const res = await api.processAudio(file, true, patientId ? Number(patientId) : undefined);
           onProcessed?.(res);
         } catch (err) {
           // swallow here; parent can choose to show separate UI if needed
@@ -216,8 +216,8 @@ export function AudioRecorder({ onProcessed, patientTokenId }: Props) {
         <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
           <button 
             onClick={start} 
-            disabled={recording || loading || !patientTokenId} 
-            style={{ padding: '8px 14px', backgroundColor: 'white', color: '#000', border: 'none', borderRadius: '4px', cursor: recording || loading || !patientTokenId ? 'not-allowed' : 'pointer', opacity: recording || loading || !patientTokenId ? 0.6 : 1 }} 
+            disabled={recording || loading || !patientId} 
+            style={{ padding: '8px 14px', backgroundColor: 'white', color: '#000', border: 'none', borderRadius: '4px', cursor: recording || loading || !patientId ? 'not-allowed' : 'pointer', opacity: recording || loading || !patientId ? 0.6 : 1 }} 
           >
             Start Recording
           </button>

@@ -57,7 +57,7 @@ export type UserChatResponse = {
 };
 
 export type Patient = {
-  token_id: string;
+  id: number;
   name: string;
   address?: string;
   phone_number?: string;

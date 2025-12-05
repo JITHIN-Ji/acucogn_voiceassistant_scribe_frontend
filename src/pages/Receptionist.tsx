@@ -160,7 +160,7 @@ export function Receptionist() {
           >
             <option value="" style={{ color: 'var(--text)' }}>Select Patient</option>
             {patients.map((patient) => (
-              <option key={patient.token_id} value={patient.token_id} style={{ color: '#000' }}>
+              <option key={patient.id} value={String(patient.id)} style={{ color: '#000' }}>
                 {patient.name}
               </option>
             ))}
@@ -185,7 +185,7 @@ export function Receptionist() {
         }}> 
           <h3>Selected Patient Information</h3>
           {(() => {
-            const patient = patients.find(p => p.token_id === selectedPatient);
+            const patient = patients.find(p => String(p.id) === selectedPatient);
             if (patient) {
               return (
                 <div>
@@ -193,7 +193,7 @@ export function Receptionist() {
                   <p><strong>Address:</strong> {patient.address || 'N/A'}</p>
                   <p><strong>Phone:</strong> {patient.phone_number || 'N/A'}</p>
                   <p><strong>Problem:</strong> {patient.problem || 'N/A'}</p>
-                  <p className="subtle"><strong>Token ID:</strong> {patient.token_id}</p>
+                  <p className="subtle"><strong>Patient ID:</strong> {patient.id}</p>
                 </div>
               );
             }
