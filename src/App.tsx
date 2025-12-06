@@ -39,8 +39,8 @@ function Navigation() {
 
       {/* Admin link - visible to all */}
       <Link 
-        to="/receptionist" 
-        className={`btn ${isActive('/receptionist') ? '' : 'btn-outline'}`}
+        to="/admin" 
+        className={`btn ${isActive('/admin') ? '' : 'btn-outline'}`}
         style={{ 
           padding: '8px 14px',
           backgroundColor: isActive('/receptionist') ? 'var(--btn-bg)' : 'transparent',
@@ -226,7 +226,7 @@ export function App() {
             <Doctor />
           </ProtectedRoute>
         } />
-        <Route path="/receptionist" element={
+        <Route path="/admin" element={
           <ProtectedRoute>
             <Receptionist />
           </ProtectedRoute>
