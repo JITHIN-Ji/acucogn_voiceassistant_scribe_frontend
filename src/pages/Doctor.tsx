@@ -79,11 +79,9 @@ async function playAudioFromSupabase(
       audioRef.currentTime = 0;
     }
 
-    
-try {
-  if (audioFileName.includes('/')) {
+    // Get audio URL from backend API
     const streamUrl = api.getAudioUrl(audioFileName);
-    console.debug('🔗 Using API client for audio URL:', streamUrl);
+    console.debug('🔗 Using backend API for audio URL:', streamUrl);
 
     if (audioRef) {
       audioRef.src = streamUrl;
@@ -135,89 +133,6 @@ try {
       });
     }
 
-    return;
-  }
-
-      
-      const { supabaseClient } = await import('../api/supabaseClient');
-      const { data } = supabaseClient.storage.from('patient_db').getPublicUrl(audioFileName);
-
-      if (data && data.publicUrl) {
-        console.debug('🔗 Supabase public URL:', data.publicUrl);
-
-        if (audioRef) {
-          console.debug('📝 Using existing audio element');
-          audioRef.src = data.publicUrl;
-          audioRef.crossOrigin = 'anonymous';
-
-          audioRef.onerror = (e) => {
-            console.error('❌ Audio loading error:', e);
-            console.error('❌ Audio error code:', audioRef.error?.code);
-            console.error('❌ Audio error message:', audioRef.error?.message);
-            alert('Failed to load audio file. The file may not exist or is not accessible.');
-            setPlayingRecordId(null);
-          };
-
-          audioRef.oncanplay = () => {
-            console.debug('✅ Audio loaded successfully, playing now');
-          };
-
-          setPlayingRecordId(recordId);
-
-          const playPromise = audioRef.play();
-          if (playPromise !== undefined) playPromise.catch((error) => { console.error('❌ Playback error:', error); setPlayingRecordId(null); });
-        } else {
-          console.debug('🎙️ Creating new audio element');
-          const audio = new Audio(data.publicUrl);
-          audio.crossOrigin = 'anonymous';
-
-          audio.onerror = (e) => {
-            console.error('❌ Audio loading error:', e);
-            console.error('❌ Audio error code:', audio.error?.code);
-            setPlayingRecordId(null);
-          };
-
-          audio.oncanplay = () => console.debug('✅ Audio loaded successfully, playing now');
-          audio.onended = () => { console.debug('🏁 Audio playback ended'); setPlayingRecordId(null); };
-
-          setPlayingRecordId(recordId);
-          setAudioRef(audio);
-
-          const playPromise = audio.play();
-          if (playPromise !== undefined) playPromise.catch((error) => { console.error('❌ Playback error:', error); setPlayingRecordId(null); });
-        }
-      } else {
-        console.error('❌ Could not get public URL from Supabase');
-      }
-    } catch (supabaseError) {
-      console.error('⚠️ Error using Supabase client or backend stream:', supabaseError);
-      
-      const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL;
-      if (!supabaseUrl) {
-        console.error('❌ Supabase URL not configured');
-        alert('Supabase URL not configured. Please check environment variables.');
-        return;
-      }
-
-      const publicUrl = `${supabaseUrl}/storage/v1/object/public/patient_db/${audioFileName}`;
-      console.debug('🔗 Fallback constructed URL:', publicUrl);
-
-      if (audioRef) {
-        audioRef.src = publicUrl;
-        audioRef.crossOrigin = 'anonymous';
-
-        audioRef.onended = () => { console.debug('🏁 Audio playback ended'); setPlayingRecordId(null); };
-        setPlayingRecordId(recordId);
-        audioRef.play().catch((error) => { console.error('❌ Playback error:', error); setPlayingRecordId(null); });
-      } else {
-        const audio = new Audio(publicUrl);
-        audio.crossOrigin = 'anonymous';
-        audio.onended = () => { console.debug('🏁 Audio playback ended'); setPlayingRecordId(null); };
-        setPlayingRecordId(recordId);
-        setAudioRef(audio);
-        audio.play().catch((error) => { console.error('❌ Playback error:', error); setPlayingRecordId(null); });
-      }
-    }
   } catch (error) {
     console.error('❌ Error in playAudioFromSupabase:', error);
     alert('Error playing audio: ' + (error instanceof Error ? error.message : String(error)));
