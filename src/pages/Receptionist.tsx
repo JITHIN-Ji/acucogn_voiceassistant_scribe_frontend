@@ -144,7 +144,7 @@ export function Receptionist() {
 
   return (
     <div>
-      {error && (
+      {typeof navigator !== 'undefined' && !navigator.onLine && error && (
         <div style={{
           position: 'fixed',
           top: '43%',
@@ -165,7 +165,7 @@ export function Receptionist() {
         }}>
           <div style={{ position: 'relative' }}>
             <button
-              onClick={() => setError('')}
+              onClick={() => { setError(''); setButtonError(''); }}
               aria-label="Close error"
               title="Close"
               style={{
