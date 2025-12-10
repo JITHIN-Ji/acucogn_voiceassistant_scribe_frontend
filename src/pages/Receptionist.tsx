@@ -335,7 +335,7 @@ export function Receptionist() {
               </div>
               <div className="row" style={{ marginTop: 16 }}>
                 <button type="submit" className="btn" disabled={loading}>
-                  {loading ? '⏳ Saving...' : '✅ Save'}
+                  {loading ? '⏳ Saving...' : 'Save'}
                 </button>
                 <button type="button" className="btn btn-outline" onClick={handleCloseForm}>
                   Cancel
