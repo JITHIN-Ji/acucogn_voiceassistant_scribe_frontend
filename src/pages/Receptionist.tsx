@@ -145,68 +145,66 @@ export function Receptionist() {
   return (
     <div>
 {typeof navigator !== 'undefined' && !navigator.onLine && error && (
-        <div style={{
-          position: 'fixed',
-          top: '43%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          backgroundColor: '#FF9800',
-          border: '2px solid #F57C00',
-          borderRadius: '16px',
-          padding: '24px 28px',
-          color: '#ffffff',
-          zIndex: 9999,
-          boxShadow: '0 10px 40px rgba(245, 124, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.15)',
-          maxWidth: '420px',
-          textAlign: 'center',
-          fontSize: '15px',
-          fontWeight: 500,
-          lineHeight: '1.6'
-        }}>
-          <div style={{ position: 'relative' }}>
-            <button
-              onClick={() => { setError(''); setButtonError(''); }}
-              aria-label="Close error"
-              title="Close"
-              style={{
-                position: 'absolute',
-                top: '-34px',
-                right: '-34px',
-                width: '36px',
-                height: '36px',
-                borderRadius: '50%',
-                border: '2px solid #ffffff',
-                background: 'linear-gradient(135deg, #FB8C00 0%, #F57C00 100%)',
-                color: '#ffffff',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '18px',
-                fontWeight: 'bold',
-                boxShadow: '0 4px 16px rgba(245, 124, 0, 0.4)',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(135deg, #E65100 0%, #EF6C00 100%)';
-                e.currentTarget.style.transform = 'scale(1.15) rotate(90deg)';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(230, 81, 0, 0.5)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(135deg, #FB8C00 0%, #F57C00 100%)';
-                e.currentTarget.style.transform = 'scale(1) rotate(0deg)';
-                e.currentTarget.style.boxShadow = '0 4px 16px rgba(245, 124, 0, 0.4)';
-              }}
-            >
-              ✕
-            </button>
-
-            <div style={{ padding: '8px 4px', fontWeight: '600', textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>
-              ⚠️ {error}
-            </div>
-          </div>
-        </div>
-      )}
+  <div style={{
+    position: 'fixed',
+    top: '43%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    backgroundColor: 'rgba(20, 40, 60, 0.95)',
+    border: '2px solid rgba(255, 107, 107, 0.6)',
+    borderRadius: '12px',
+    padding: '20px 24px',
+    color: '#fff',
+    zIndex: 9999,
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+    maxWidth: '400px',
+    textAlign: 'center',
+    fontSize: '15px',
+    fontWeight: 500,
+    lineHeight: '1.5',
+    backdropFilter: 'blur(10px)'
+  }}>
+    <div style={{ position: 'relative' }}>
+      <button
+        onClick={() => { setError(''); setButtonError(''); }}
+        aria-label="Close error"
+        title="Close"
+        style={{
+          position: 'absolute',
+          top: '-32px',
+          right: '-32px',
+          width: '32px',
+          height: '32px',
+          borderRadius: '50%',
+          border: '2px solid rgba(255, 255, 255, 0.3)',
+          background: 'rgba(255, 107, 107, 0.85)',
+          color: '#fff',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '16px',
+          fontWeight: 'bold',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+          transition: 'all 0.2s ease'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = 'rgba(255, 107, 107, 1)';
+          e.currentTarget.style.transform = 'scale(1.1)';
+          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = 'rgba(255, 107, 107, 0.85)';
+          e.currentTarget.style.transform = 'scale(1)';
+          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+        }}
+      >
+        ✕
+      </button>
+      <div style={{ padding: '8px 4px' }}>{error}</div>
+    </div>
+  </div>
+)}
       <div className="hero">
         <h1>Receptionist Portal</h1>
         <p className="subtle subtitle-prominent">Manage patient appointments and communications.</p>
