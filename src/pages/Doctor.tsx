@@ -495,19 +495,34 @@ export function Doctor() {
 
       const resp: ApprovePlanResponse = await api.approvePlan(payload);
       
-      // Check if appointment sending was successful
+      
       const appointmentSending = resp.appointment_sending;
       if (appointmentSending?.status === 'error') {
-        const errorMsg = appointmentSending?.error || 'Failed to send email';
-        setButtonError(`❌ Email sending failed`);
+        if (typeof navigator !== 'undefined' && !navigator.onLine) {
+          
+          setError('Network connection failed. Please check your internet.');
+          setButtonError('');
+        } else {
+          
+          setError('');
+          setButtonError(appointmentSending?.error || 'Failed to send email');
+        }
         setSendLoading(false);
         return;
       }
       
       setMessage('✅ Email sent successfully with the latest edited version.');
     } catch (e: any) {
-      const errorDetail = e?.response?.data?.detail || e?.response?.data?.message || 'Email sending failed';
-      setButtonError(`❌ ${errorDetail}`);
+      if (typeof navigator !== 'undefined' && !navigator.onLine) {
+        // Offline: show the big network modal
+        setError('Network connection failed. Please check your internet.');
+        setButtonError('');
+      } else {
+        // Backend error: display returned error inline
+        const errorDetail = e?.response?.data?.detail || e?.response?.data?.message || 'Email sending failed';
+        setError('');
+        setButtonError(errorDetail);
+      }
     } finally {
       setSendLoading(false);
     }
@@ -528,7 +543,7 @@ export function Doctor() {
           {message}
         </div>
       )}
-      {error && (
+      {typeof navigator !== 'undefined' && !navigator.onLine && error && (
         <div style={{
           position: 'fixed',
           top: '43%',
@@ -549,7 +564,7 @@ export function Doctor() {
         }}>
           <div style={{ position: 'relative' }}>
             <button
-              onClick={() => setError('')}
+              onClick={() => { setError(''); setButtonError(''); }}
               aria-label="Close error"
               title="Close"
               style={{
