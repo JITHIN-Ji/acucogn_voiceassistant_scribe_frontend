@@ -150,19 +150,19 @@ export function Receptionist() {
     top: '43%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    backgroundColor: 'rgba(20, 40, 60, 0.95)',
-    border: '2px solid rgba(255, 107, 107, 0.6)',
+    backgroundColor: 'rgba(31, 51, 68, 0.96)',
+    border: '2px solid rgba(255, 139, 139, 0.5)',
     borderRadius: '12px',
     padding: '20px 24px',
-    color: '#fff',
+    color: '#e0f2f7',
     zIndex: 9999,
-    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(96, 189, 198, 0.1)',
     maxWidth: '400px',
     textAlign: 'center',
     fontSize: '15px',
     fontWeight: 500,
     lineHeight: '1.5',
-    backdropFilter: 'blur(10px)'
+    backdropFilter: 'blur(12px)'
   }}>
     <div style={{ position: 'relative' }}>
       <button
@@ -176,8 +176,8 @@ export function Receptionist() {
           width: '32px',
           height: '32px',
           borderRadius: '50%',
-          border: '2px solid rgba(255, 255, 255, 0.3)',
-          background: 'rgba(255, 107, 107, 0.85)',
+          border: '2px solid rgba(96, 189, 198, 0.3)',
+          background: 'rgba(255, 118, 118, 0.9)',
           color: '#fff',
           cursor: 'pointer',
           display: 'flex',
@@ -185,18 +185,20 @@ export function Receptionist() {
           justifyContent: 'center',
           fontSize: '16px',
           fontWeight: 'bold',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
           transition: 'all 0.2s ease'
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.background = 'rgba(255, 107, 107, 1)';
+          e.currentTarget.style.background = 'rgba(255, 118, 118, 1)';
           e.currentTarget.style.transform = 'scale(1.1)';
-          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+          e.currentTarget.style.borderColor = 'rgba(96, 189, 198, 0.5)';
+          e.currentTarget.style.boxShadow = '0 6px 16px rgba(255, 118, 118, 0.4)';
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.background = 'rgba(255, 107, 107, 0.85)';
+          e.currentTarget.style.background = 'rgba(255, 118, 118, 0.9)';
           e.currentTarget.style.transform = 'scale(1)';
-          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+          e.currentTarget.style.borderColor = 'rgba(96, 189, 198, 0.3)';
+          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3)';
         }}
       >
         ✕
