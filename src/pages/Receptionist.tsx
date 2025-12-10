@@ -147,23 +147,50 @@ export function Receptionist() {
       {error && (
         <div style={{
           position: 'fixed',
-          top: '50%',
+          top: '43%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          backgroundColor: 'rgba(255, 71, 87, 0.95)',
-          border: '2px solid rgba(255, 71, 87, 0.8)',
-          borderRadius: '12px',
-          padding: '24px 32px',
+          backgroundColor: 'rgba(255, 120, 125, 0.88)',
+          border: '1px solid rgba(255, 120, 125, 0.6)',
+          borderRadius: '10px',
+          padding: '12px 20px',
           color: '#fff',
           zIndex: 9999,
-          boxShadow: '0 10px 40px rgba(255, 71, 87, 0.3)',
-          maxWidth: '500px',
+          boxShadow: '0 6px 18px rgba(0, 0, 0, 0.12)',
+          maxWidth: '360px',
           textAlign: 'center',
-          fontSize: '16px',
-          fontWeight: '500',
-          lineHeight: '1.5'
+          fontSize: '14px',
+          fontWeight: 500,
+          lineHeight: '1.4'
         }}>
-          {error}
+          <div style={{ position: 'relative' }}>
+            <button
+              onClick={() => setError('')}
+              aria-label="Close error"
+              title="Close"
+              style={{
+                position: 'absolute',
+                top: '-10px',
+                right: '-10px',
+                width: '28px',
+                height: '28px',
+                borderRadius: '50%',
+                border: 'none',
+                background: 'rgba(0,0,0,0.25)',
+                color: '#fff',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '12px',
+                boxShadow: '0 4px 8px rgba(0,0,0,0.12)'
+              }}
+            >
+              ✖
+            </button>
+
+            <div style={{ padding: '6px 4px' }}>{error}</div>
+          </div>
         </div>
       )}
       <div className="hero">
