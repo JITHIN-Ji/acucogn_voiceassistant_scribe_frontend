@@ -544,64 +544,66 @@ export function Doctor() {
         </div>
       )}
 {typeof navigator !== 'undefined' && !navigator.onLine && error && (
-        <div style={{
-          position: 'fixed',
-          top: '43%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          backgroundColor: '#ff6b6b',
-          border: '2px solid #ff5252',
-          borderRadius: '12px',
-          padding: '20px 24px',
+  <div style={{
+    position: 'fixed',
+    top: '43%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    backgroundColor: 'rgba(20, 40, 60, 0.95)',
+    border: '2px solid rgba(255, 107, 107, 0.6)',
+    borderRadius: '12px',
+    padding: '20px 24px',
+    color: '#fff',
+    zIndex: 9999,
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+    maxWidth: '400px',
+    textAlign: 'center',
+    fontSize: '15px',
+    fontWeight: 500,
+    lineHeight: '1.5',
+    backdropFilter: 'blur(10px)'
+  }}>
+    <div style={{ position: 'relative' }}>
+      <button
+        onClick={() => { setError(''); setButtonError(''); }}
+        aria-label="Close error"
+        title="Close"
+        style={{
+          position: 'absolute',
+          top: '-32px',
+          right: '-32px',
+          width: '32px',
+          height: '32px',
+          borderRadius: '50%',
+          border: '2px solid rgba(255, 255, 255, 0.3)',
+          background: 'rgba(255, 107, 107, 0.85)',
           color: '#fff',
-          zIndex: 9999,
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
-          maxWidth: '400px',
-          textAlign: 'center',
-          fontSize: '15px',
-          fontWeight: 500,
-          lineHeight: '1.5'
-        }}>
-          <div style={{ position: 'relative' }}>
-            <button
-              onClick={() => { setError(''); setButtonError(''); }}
-              aria-label="Close error"
-              title="Close"
-              style={{
-                position: 'absolute',
-                top: '-32px',
-                right: '-32px',
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                border: '2px solid #fff',
-                background: '#d63031',
-                color: '#fff',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '16px',
-                fontWeight: 'bold',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#b71c1c';
-                e.currentTarget.style.transform = 'scale(1.1)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = '#d63031';
-                e.currentTarget.style.transform = 'scale(1)';
-              }}
-            >
-              ✕
-            </button>
-
-            <div style={{ padding: '8px 4px' }}>{error}</div>
-          </div>
-        </div>
-      )}
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '16px',
+          fontWeight: 'bold',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+          transition: 'all 0.2s ease'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = 'rgba(255, 107, 107, 1)';
+          e.currentTarget.style.transform = 'scale(1.1)';
+          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = 'rgba(255, 107, 107, 0.85)';
+          e.currentTarget.style.transform = 'scale(1)';
+          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+        }}
+      >
+        ✕
+      </button>
+      <div style={{ padding: '8px 4px' }}>{error}</div>
+    </div>
+  </div>
+)}
       
       <section className="card" style={{ 
         marginBottom: '24px',
