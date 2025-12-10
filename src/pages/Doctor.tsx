@@ -544,64 +544,19 @@ export function Doctor() {
         </div>
       )}
 {typeof navigator !== 'undefined' && !navigator.onLine && error && (
-  <div style={{
-    position: 'fixed',
-    top: '43%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    backgroundColor: 'rgba(20, 40, 60, 0.95)',
-    border: '2px solid rgba(255, 107, 107, 0.6)',
-    borderRadius: '12px',
-    padding: '20px 24px',
-    color: '#fff',
-    zIndex: 9999,
-    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
-    maxWidth: '400px',
-    textAlign: 'center',
-    fontSize: '15px',
-    fontWeight: 500,
-    lineHeight: '1.5',
-    backdropFilter: 'blur(10px)'
-  }}>
-    <div style={{ position: 'relative' }}>
-      <button
-        onClick={() => { setError(''); setButtonError(''); }}
-        aria-label="Close error"
-        title="Close"
-        style={{
-          position: 'absolute',
-          top: '-32px',
-          right: '-32px',
-          width: '32px',
-          height: '32px',
-          borderRadius: '50%',
-          border: '2px solid rgba(255, 255, 255, 0.3)',
-          background: 'rgba(255, 107, 107, 0.85)',
-          color: '#fff',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '16px',
-          fontWeight: 'bold',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-          transition: 'all 0.2s ease'
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = 'rgba(255, 107, 107, 1)';
-          e.currentTarget.style.transform = 'scale(1.1)';
-          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = 'rgba(255, 107, 107, 0.85)';
-          e.currentTarget.style.transform = 'scale(1)';
-          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-        }}
-      >
-        ✕
-      </button>
-      <div style={{ padding: '8px 4px' }}>{error}</div>
-    </div>
+  <div className="network-modal" role="alert" aria-live="assertive">
+    <div className="network-modal__glow" aria-hidden="true" />
+    <button
+      onClick={() => { setError(''); setButtonError(''); }}
+      aria-label="Close network status"
+      title="Close"
+      className="network-modal__close"
+    >
+      ✕
+    </button>
+    <div className="network-modal__icon">📡</div>
+    <h3 className="network-modal__title">No internet</h3>
+    <p className="network-modal__message">Check your connection and try again.</p>
   </div>
 )}
       
