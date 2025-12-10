@@ -144,24 +144,24 @@ export function Receptionist() {
 
   return (
     <div>
-      {typeof navigator !== 'undefined' && !navigator.onLine && error && (
+{typeof navigator !== 'undefined' && !navigator.onLine && error && (
         <div style={{
           position: 'fixed',
           top: '43%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          backgroundColor: 'rgba(255, 120, 125, 0.88)',
-          border: '1px solid rgba(255, 120, 125, 0.6)',
-          borderRadius: '10px',
-          padding: '12px 20px',
+          backgroundColor: '#ff6b6b',
+          border: '2px solid #ff5252',
+          borderRadius: '12px',
+          padding: '20px 24px',
           color: '#fff',
           zIndex: 9999,
-          boxShadow: '0 6px 18px rgba(0, 0, 0, 0.12)',
-          maxWidth: '360px',
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
+          maxWidth: '400px',
           textAlign: 'center',
-          fontSize: '14px',
+          fontSize: '15px',
           fontWeight: 500,
-          lineHeight: '1.4'
+          lineHeight: '1.5'
         }}>
           <div style={{ position: 'relative' }}>
             <button
@@ -170,26 +170,36 @@ export function Receptionist() {
               title="Close"
               style={{
                 position: 'absolute',
-                top: '-10px',
-                right: '-10px',
-                width: '28px',
-                height: '28px',
+                top: '-32px',
+                right: '-32px',
+                width: '32px',
+                height: '32px',
                 borderRadius: '50%',
-                border: 'none',
-                background: 'rgba(0,0,0,0.25)',
+                border: '2px solid #fff',
+                background: '#d63031',
                 color: '#fff',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '12px',
-                boxShadow: '0 4px 8px rgba(0,0,0,0.12)'
+                fontSize: '16px',
+                fontWeight: 'bold',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#b71c1c';
+                e.currentTarget.style.transform = 'scale(1.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = '#d63031';
+                e.currentTarget.style.transform = 'scale(1)';
               }}
             >
-              ✖
+              ✕
             </button>
 
-            <div style={{ padding: '6px 4px' }}>{error}</div>
+            <div style={{ padding: '8px 4px' }}>{error}</div>
           </div>
         </div>
       )}
