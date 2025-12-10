@@ -530,12 +530,22 @@ export function Doctor() {
       )}
       {error && (
         <div style={{
-          backgroundColor: 'rgba(255, 71, 87, 0.15)',
-          border: '1px solid rgba(255, 71, 87, 0.3)',
-          borderRadius: '8px',
-          padding: '12px 16px',
-          marginBottom: '20px',
-          color: '#ff4757'
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          backgroundColor: 'rgba(255, 71, 87, 0.95)',
+          border: '2px solid rgba(255, 71, 87, 0.8)',
+          borderRadius: '12px',
+          padding: '24px 32px',
+          color: '#fff',
+          zIndex: 9999,
+          boxShadow: '0 10px 40px rgba(255, 71, 87, 0.3)',
+          maxWidth: '500px',
+          textAlign: 'center',
+          fontSize: '16px',
+          fontWeight: '500',
+          lineHeight: '1.5'
         }}>
           {error}
         </div>
