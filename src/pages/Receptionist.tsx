@@ -29,6 +29,16 @@ export function Receptionist() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [buttonError, setButtonError] = useState<string>('');
+
+  const checkNetworkConnection = (): boolean => {
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      setButtonError('❌ Network connection failed. Please check your internet.');
+      return false;
+    }
+    setButtonError('');
+    return true;
+  };
 
   
   const [formData, setFormData] = useState<CreatePatientPayload>({
@@ -43,6 +53,21 @@ export function Receptionist() {
     loadPatients();
   }, []);
 
+  
+  useEffect(() => {
+    const handleOnline = () => {
+      setError('');
+      setButtonError('');
+    };
+    const handleOffline = () => setError('Network connection failed');
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
   const loadPatients = async () => {
     try {
       
@@ -52,7 +77,7 @@ export function Receptionist() {
       }
     } catch (error: any) {
       console.error('Error loading patients:', error);
-      setError('Failed to load patients');
+      setError('Network connection failed');
     }
   };
 
@@ -66,12 +91,15 @@ export function Receptionist() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!checkNetworkConnection()) return;
+    
     setError('');
     setMessage('');
     setLoading(true);
 
     if (!formData.name.trim()) {
-      setError('Patient name is required');
+      setButtonError('Patient name is required');
       setLoading(false);
       return;
     }
@@ -80,21 +108,22 @@ export function Receptionist() {
       
       const response = await api.createPatient({ ...formData, session_id: sessionIdRef.current });
       if (response.status === 'success') {
-        setMessage('Patient saved successfully!');
+        setMessage('✅ Patient saved successfully!');
         setFormData({
           name: '',
           address: '',
           phone_number: '',
           problem: '',
         });
+        setButtonError('');
         setShowForm(false);
         await loadPatients(); 
       } else {
-        setError(response.message || 'Failed to save patient');
+        setButtonError(response.message || 'Network connection failed');
       }
     } catch (error: any) {
       console.error('Error saving patient:', error);
-      setError(error?.response?.data?.message || 'Failed to save patient');
+      setButtonError(error?.response?.data?.message || 'Network connection failed');
     } finally {
       setLoading(false);
     }
@@ -110,6 +139,7 @@ export function Receptionist() {
     });
     setError('');
     setMessage('');
+    setButtonError('');
   };
 
   return (
@@ -155,6 +185,13 @@ export function Receptionist() {
           <select
             value={selectedPatient}
             onChange={(e) => setSelectedPatient(e.target.value)}
+            onFocus={() => {
+              if (typeof navigator !== 'undefined' && !navigator.onLine) {
+                setError('Network connection failed');
+              } else {
+                setError('');
+              }
+            }}
             className="input"
             style={{ minWidth: '200px', color: selectedPatient ? '#000' : 'var(--text)', width: '100%', maxWidth: '420px', backgroundColor: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '6px', padding: '10px 12px' }}
           >
@@ -296,16 +333,27 @@ export function Receptionist() {
                   rows={4}
                 />
               </div>
-              {error && <p style={{ color: '#c92a2a', marginBottom: 12 }}>{error}</p>}
-              
               <div className="row" style={{ marginTop: 16 }}>
                 <button type="submit" className="btn" disabled={loading}>
-                  {loading ? 'Saving...' : 'Save'}
+                  {loading ? '⏳ Saving...' : '✅ Save'}
                 </button>
                 <button type="button" className="btn btn-outline" onClick={handleCloseForm}>
                   Cancel
                 </button>
               </div>
+              
+              {buttonError && (
+                <div style={{
+                  backgroundColor: 'rgba(255, 71, 87, 0.15)',
+                  border: '1px solid rgba(255, 71, 87, 0.3)',
+                  borderRadius: '8px',
+                  padding: '12px 16px',
+                  marginTop: '16px',
+                  color: '#ff4757'
+                }}>
+                  {buttonError}
+                </div>
+              )}
             </form>
           </div>
         </div>

@@ -1,5 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { jwtDecode } from 'jwt-decode';
+import { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
 
 interface User {
   email: string;
@@ -9,8 +8,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  token: string | null;
-  login: (token: string) => void;
+  login: (user: User) => void; 
   logout: () => void;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -18,24 +16,57 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+
+const TOKEN_REFRESH_INTERVAL = 60 * 60 * 1000; // 1 hour
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  
   const [isLoading, setIsLoading] = useState(true);
+  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    // Check for stored token on mount
-    const storedToken = localStorage.getItem('auth_token');
-    if (storedToken) {
-      verifyToken(storedToken);
-    } else {
-      setIsLoading(false);
-    }
+    
+    verifyToken();
+    
+    
+    return () => {
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
+      }
+    };
   }, []);
 
-  const verifyToken = async (token: string) => {
+  const startTokenRefreshTimer = () => {
+    
+    if (refreshIntervalRef.current) {
+      clearInterval(refreshIntervalRef.current);
+    }
+
+    
+    refreshIntervalRef.current = setInterval(() => {
+      refreshTokenAutomatically();
+    }, TOKEN_REFRESH_INTERVAL);
+  };
+
+  const refreshTokenAutomatically = async () => {
     try {
-      // Token is already set in localStorage, axios interceptor will use it
+      const { authApi } = await import('../api/client');
+      const data = await authApi.refreshToken();
+      
+      if (data.status === 'success') {
+        console.log('Token refreshed successfully');
+      }
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+      
+      logout();
+    }
+  };
+
+  const verifyToken = async () => {
+    try {
+      
       const { authApi } = await import('../api/client');
       const data = await authApi.verifyToken();
       
@@ -45,56 +76,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           name: data.user.name,
           picture: data.user.picture || '',
         });
-        setToken(token);
+        
+        
+        startTokenRefreshTimer();
       } else {
-        // Token is invalid, clear it
-        localStorage.removeItem('auth_token');
-        setToken(null);
+        
         setUser(null);
       }
     } catch (error) {
       console.error('Token verification failed:', error);
-      localStorage.removeItem('auth_token');
-      setToken(null);
       setUser(null);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const login = (newToken: string) => {
-    localStorage.setItem('auth_token', newToken);
-    setToken(newToken);
-
-    // Decode token to get user info
-    try {
-      const decoded: any = jwtDecode(newToken);
-      setUser({
-        email: decoded.email,
-        name: decoded.name,
-        picture: decoded.picture || '',
-      });
-    } catch (error) {
-      console.error('Failed to decode token:', error);
-    }
+  
+  const login = (userData: User) => {
+    setUser(userData);
+    
+    startTokenRefreshTimer();
   };
 
   const logout = async () => {
-    if (token) {
-      try {
-        await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-      } catch (error) {
-        console.error('Logout request failed:', error);
-      }
+    
+    if (refreshIntervalRef.current) {
+      clearInterval(refreshIntervalRef.current);
+    }
+
+    try {
+      
+      const { authApi } = await import('../api/client');
+      await authApi.logout();
+    } catch (error) {
+      console.error('Logout request failed:', error);
     }
     
-    localStorage.removeItem('auth_token');
-    setToken(null);
     setUser(null);
   };
 
@@ -102,10 +119,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{
         user,
-        token,
         login,
         logout,
-        isAuthenticated: !!user && !!token,
+        isAuthenticated: !!user,  
         isLoading,
       }}
     >

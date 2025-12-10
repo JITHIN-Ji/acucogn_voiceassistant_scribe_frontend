@@ -17,8 +17,8 @@ export function Login() {
       const { authApi } = await import('../api/client');
       const data = await authApi.googleAuth(credentialResponse.credential);
       
-      if (data.status === 'success' && data.token) {
-        login(data.token);
+      if (data.status === 'success' && data.user) { 
+        login(data.user);  
         navigate('/');
       } else {
         setError('Authentication failed. Please try again.');

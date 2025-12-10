@@ -79,7 +79,7 @@ async function playAudioFromSupabase(
       audioRef.currentTime = 0;
     }
 
-    // Get audio URL from backend API
+    
     const streamUrl = api.getAudioUrl(audioFileName);
     console.debug('🔗 Using backend API for audio URL:', streamUrl);
 
@@ -172,21 +172,57 @@ export function Doctor() {
   const [expandedTranscript, setExpandedTranscript] = useState<number | null>(null);
   const [playingRecordId, setPlayingRecordId] = useState<number | null>(null);
   const [audioRef, setAudioRef] = useState<HTMLAudioElement | null>(null);
+  const [buttonError, setButtonError] = useState<string>('');
+
+  const checkNetworkConnection = (): boolean => {
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      setButtonError('❌ Network connection failed. Please check your internet.');
+      return false;
+    }
+    setButtonError('');
+    return true;
+  };
 
   useEffect(() => {
     loadPatients();
   }, []);
 
   const loadPatients = async () => {
+    
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      setError('Network connection failed');
+      setPatients([]);
+      return;
+    }
+
     try {
       const response = await api.getPatients();
       if (response.status === 'success' && response.patients) {
         setPatients(response.patients);
+        setError('');
       }
     } catch (error: any) {
       console.error('Error loading patients:', error);
+      setError('Network connection failed');
     }
   };
+
+  
+  useEffect(() => {
+    const handleOnline = () => {
+      setError('');
+      setButtonError('');
+    };
+    const handleOffline = () => setError('Network connection failed');
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   useEffect(() => {
     if (activeResult) {
@@ -219,22 +255,7 @@ export function Doctor() {
     setSoapEditable(prev => ({ ...prev, [section]: value }));
   };
 
-  const handlePatientSelect = (patientId: string) => {
-    setSelectedPatient(patientId);
-    const selected = patients.find(p => String(p.id) === patientId);
-    if (selected) {
-      setSelectedPatientName(selected.name || '');
-
-
-      setPatientEmail((selected as any).email || '');
-      setMessage(`✅ Patient "${selected.name}" selected successfully!`);
-      setError('');
-      
-      
-      loadSoapHistory(patientId);
-    }
-  };
-
+  
   const loadSoapHistory = async (patientId: string) => {
     setLoadingHistory(true);
     try {
@@ -277,7 +298,49 @@ export function Doctor() {
     }
   };
 
+  
+  const handlePatientSelect = (patientId: string) => {
+
+    if (!navigator.onLine) {
+    setError("❌ Network connection failed. Please check your internet.");
+    setMessage('');
+    return;
+  }
+    setSelectedPatient(patientId);
+    const selected = patients.find(p => String(p.id) === patientId);
+    if (selected) {
+      setSelectedPatientName(selected.name || '');
+      setPatientEmail((selected as any).email || '');
+      setMessage(`✅ Patient "${selected.name}" selected successfully!`);
+      setError('');
+      
+      
+      loadSoapHistory(patientId);
+    }
+  };
+
+  
+  useEffect(() => {
+    
+    setActiveResult(null);
+    setSoapEditable(initializeSoapSections(null));
+    setCurrentSoapRecordId(null);
+    setEmailPreview('');
+    setEmailPreviewGenerated(false);
+    setEmailApproved(false);
+    setPlanApproved(false);
+    setPatientEmail('');
+    
+    if (!selectedPatient) {
+      setMessage('');
+      setError('');
+      setSoapHistory([]); 
+    }
+  }, [selectedPatient]);
+
   function onSaveChanges() {
+    if (!checkNetworkConnection()) return;
+    
     setError('');
     setMessage('');
 
@@ -308,11 +371,13 @@ export function Doctor() {
       setMessage('✅ SOAP changes saved successfully to database!');
     } catch (err: any) {
       console.error('Error saving SOAP to database:', err);
-      setError('Failed to save SOAP to database');
+      setButtonError('Failed to save SOAP to database');
     }
   }
 
   async function approvePlan() {
+    if (!checkNetworkConnection()) return;
+    
     setError('');
     setMessage('');
     setApproving(true);
@@ -322,7 +387,7 @@ export function Doctor() {
 
     if (!planSection.trim()) {
       setApproving(false);
-      setError('Plan section cannot be empty.');
+      setButtonError('Plan section cannot be empty.');
       return;
     }
 
@@ -338,13 +403,15 @@ export function Doctor() {
       setMessage('✅ Plan approved successfully. Click "Generate Email Preview" to continue.');
       setPlanApproved(true);
     } catch (e: any) {
-      setError(e?.response?.data?.detail || 'Plan approval failed');
+      setButtonError(e?.response?.data?.detail || 'Plan approval failed');
     } finally {
       setApproving(false);
     }
   }
 
   async function generatePreview() {
+    if (!checkNetworkConnection()) return;
+    
     setError('');
     setMessage('');
     setEmailPreview('');
@@ -369,16 +436,18 @@ export function Doctor() {
         setEmailPreviewGenerated(true);
         setMessage('Preview generated. You can edit the email content below.');
       } else {
-        setError('Email preview was empty.');
+        setButtonError('Email preview was empty.');
       }
     } catch (e: any) {
-      setError(e?.response?.data?.detail || 'Preview generation failed');
+      setButtonError(e?.response?.data?.detail || 'Preview generation failed');
     } finally {
       setPreviewLoading(false);
     }
   }
 
   async function approveEmail() {
+    if (!checkNetworkConnection()) return;
+    
     setError('');
     setMessage('');
     setEmailApproving(true);
@@ -386,7 +455,7 @@ export function Doctor() {
 
     if (!emailPreview.trim()) {
       setEmailApproving(false);
-      setError('Email content cannot be empty.');
+      setButtonError('Email content cannot be empty.');
       return;
     }
 
@@ -394,13 +463,15 @@ export function Doctor() {
       setMessage('✅ Email approved successfully. You can now send the email.');
       setEmailApproved(true);
     } catch (e: any) {
-      setError(e?.response?.data?.detail || 'Email approval failed');
+      setButtonError(e?.response?.data?.detail || 'Email approval failed');
     } finally {
       setEmailApproving(false);
     }
   }
 
   async function sendEmail() {
+    if (!checkNetworkConnection()) return;
+    
     setError('');
     setMessage('');
     setSendLoading(true);
@@ -410,7 +481,7 @@ export function Doctor() {
 
     if (!emailApproved) {
       setSendLoading(false);
-      setError('Please approve the email before sending.');
+      setButtonError('Please approve the email before sending.');
       return;
     }
 
@@ -428,7 +499,7 @@ export function Doctor() {
       const appointmentSending = resp.appointment_sending;
       if (appointmentSending?.status === 'error') {
         const errorMsg = appointmentSending?.error || 'Failed to send email';
-        setError(`❌ Email sending failed`);
+        setButtonError(`❌ Email sending failed`);
         setSendLoading(false);
         return;
       }
@@ -436,7 +507,7 @@ export function Doctor() {
       setMessage('✅ Email sent successfully with the latest edited version.');
     } catch (e: any) {
       const errorDetail = e?.response?.data?.detail || e?.response?.data?.message || 'Email sending failed';
-      setError(`❌ ${errorDetail}`);
+      setButtonError(`❌ ${errorDetail}`);
     } finally {
       setSendLoading(false);
     }
@@ -486,6 +557,13 @@ export function Doctor() {
         <select
           value={selectedPatient}
           onChange={(e) => handlePatientSelect(e.target.value)}
+          onFocus={() => {
+            if (typeof navigator !== 'undefined' && !navigator.onLine) {
+              setError('Network connection failed');
+            } else {
+              setError('');
+            }
+          }}
           className="input"
           style={{
             width: '100%',
@@ -696,6 +774,19 @@ export function Doctor() {
               📥 Download SOAP (JSON)
             </button>
           </div>
+          
+          {buttonError && (
+            <div style={{
+              backgroundColor: 'rgba(255, 71, 87, 0.15)',
+              border: '1px solid rgba(255, 71, 87, 0.3)',
+              borderRadius: '8px',
+              padding: '12px 16px',
+              marginTop: '16px',
+              color: '#ff4757'
+            }}>
+              {buttonError}
+            </div>
+          )}
         </section>
       )}
 
@@ -748,6 +839,19 @@ export function Doctor() {
               </button>
             )}
           </div>
+
+          {buttonError && !emailPreviewGenerated && (
+            <div style={{
+              backgroundColor: 'rgba(255, 71, 87, 0.15)',
+              border: '1px solid rgba(255, 71, 87, 0.3)',
+              borderRadius: '8px',
+              padding: '12px 16px',
+              marginBottom: '16px',
+              color: '#ff4757'
+            }}>
+              {buttonError}
+            </div>
+          )}
 
           {emailPreviewGenerated && (
             <div className="email-preview-container" style={{ 
@@ -803,7 +907,35 @@ export function Doctor() {
                   </button>
                 )}
               </div>
+              
+              {buttonError && (
+                <div style={{
+                  backgroundColor: 'rgba(255, 71, 87, 0.15)',
+                  border: '1px solid rgba(255, 71, 87, 0.3)',
+                  borderRadius: '8px',
+                  padding: '12px 16px',
+                  marginTop: '16px',
+                  color: '#ff4757'
+                }}>
+                  {buttonError}
+                </div>
+              )}
             </div>
+          )}
+          
+          {!emailPreviewGenerated && (
+            buttonError && (
+              <div style={{
+                backgroundColor: 'rgba(255, 71, 87, 0.15)',
+                border: '1px solid rgba(255, 71, 87, 0.3)',
+                borderRadius: '8px',
+                padding: '12px 16px',
+                marginTop: '16px',
+                color: '#ff4757'
+              }}>
+                {buttonError}
+              </div>
+            )
           )}
         </section>
       )}

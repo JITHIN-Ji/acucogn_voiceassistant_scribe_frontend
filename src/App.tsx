@@ -25,7 +25,7 @@ function Navigation() {
       gap: '15px',
       position: 'relative'
     }}>
-      {/* Navigation buttons - All visible to all users */}
+      
       <Link 
         to="/" 
         className={`btn ${isActive('/') ? '' : 'btn-outline'}`}
@@ -37,19 +37,19 @@ function Navigation() {
         Home
       </Link>
 
-      {/* Admin link - visible to all */}
+      
       <Link 
         to="/admin" 
         className={`btn ${isActive('/admin') ? '' : 'btn-outline'}`}
         style={{ 
           padding: '8px 14px',
-          backgroundColor: isActive('/receptionist') ? 'var(--btn-bg)' : 'transparent',
+          backgroundColor: isActive('/admin') ? 'var(--btn-bg)' : 'transparent',
         }}
       >
         Admin
       </Link>
 
-      {/* Doctor link - visible to all */}
+      
       <Link 
         to="/doctor" 
         className={`btn ${isActive('/doctor') ? '' : 'btn-outline'}`}
@@ -61,7 +61,7 @@ function Navigation() {
         Doctor 
       </Link>
 
-      {/* Account Dropdown */}
+      
       {isAuthenticated && user && (
         <div style={{ position: 'relative' }}>
           <button
@@ -158,7 +158,7 @@ function Navigation() {
                   </div>
                 </div>
 
-                {/* Logout Button */}
+                
                 <button
                   onClick={() => {
                     setShowAccountDropdown(false);

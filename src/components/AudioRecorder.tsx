@@ -7,7 +7,7 @@ type Props = {
   patientId?: string;
 };
 
-// Voice Visualizer component that reacts to actual audio levels
+
 const VoiceVisualizer = ({ stream }: { stream: MediaStream | null }) => {
     const [levels, setLevels] = useState<number[]>(new Array(7).fill(0));
     const animationFrameRef = useRef<number>();
@@ -17,7 +17,7 @@ const VoiceVisualizer = ({ stream }: { stream: MediaStream | null }) => {
     useEffect(() => {
         if (!stream) return;
 
-        // Set up Web Audio API for audio analysis
+        
         const audioContext = new AudioContext();
         const analyser = audioContext.createAnalyser();
         const microphone = audioContext.createMediaStreamSource(stream);
@@ -32,28 +32,28 @@ const VoiceVisualizer = ({ stream }: { stream: MediaStream | null }) => {
         analyserRef.current = analyser;
         dataArrayRef.current = dataArray;
 
-        // Animation loop to update visualizer
+        
         const updateLevels = () => {
             if (!analyserRef.current || !dataArrayRef.current) return;
             
             analyserRef.current.getByteFrequencyData(dataArrayRef.current);
             
-            // Calculate average volume using manual loop
+            
             let sum = 0;
             for (let i = 0; i < dataArrayRef.current.length; i++) {
                 sum += dataArrayRef.current[i];
             }
             const average = sum / dataArrayRef.current.length;
             
-            // Normalize to 0-1 range and apply threshold
+            
             const normalizedLevel = Math.min(average / 128, 1);
-            const threshold = 0.02; // Noise floor
+            const threshold = 0.02; 
             const activeLevel = normalizedLevel > threshold ? normalizedLevel : 0;
             
-            // Create wave pattern across 7 dots
+            
             const newLevels = new Array(7).fill(0).map((_, i) => {
-                const position = i / 6; // 0 to 1
-                const wave = Math.sin(position * Math.PI); // Bell curve
+                const position = i / 6; 
+                const wave = Math.sin(position * Math.PI); 
                 return activeLevel * wave;
             });
             
@@ -73,7 +73,7 @@ const VoiceVisualizer = ({ stream }: { stream: MediaStream | null }) => {
 
     return (
         <div className="voice-visualizer-container">
-            {/* Left Bars */}
+            
             <div 
                 className="voice-bar bar-l1" 
                 style={{ 
@@ -89,7 +89,7 @@ const VoiceVisualizer = ({ stream }: { stream: MediaStream | null }) => {
                 }}
             ></div>
             
-            {/* Reactive Dots */}
+            
             {levels.map((level, i) => (
                 <div 
                     key={i} 
@@ -103,7 +103,7 @@ const VoiceVisualizer = ({ stream }: { stream: MediaStream | null }) => {
                 ></div>
             ))}
 
-            {/* Right Bars */}
+            
             <div 
                 className="voice-bar bar-r1" 
                 style={{ 
@@ -178,7 +178,7 @@ export function AudioRecorder({ onProcessed, patientId }: Props) {
           const res = await api.processAudio(file, true, patientId ? Number(patientId) : undefined);
           onProcessed?.(res);
         } catch (err) {
-          // swallow here; parent can choose to show separate UI if needed
+          
         } finally {
           setLoading(false);
         }
@@ -233,7 +233,7 @@ export function AudioRecorder({ onProcessed, patientId }: Props) {
           {loading && <span style={{ color: 'var(--accent)' }}>Processing Audio...</span>}
         </div>
 
-        {/* Voice-reactive visualizer - appears in same container */}
+        
         {recording && (
           <div style={{ marginTop: '15px' }}>
             <VoiceVisualizer stream={streamRef.current} />

@@ -10,48 +10,25 @@ import type {
   PatientResponse 
 } from '../types';
 
-const baseURL = (import.meta as any).env?.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
-
+const baseURL = (import.meta as any).env?.VITE_API_URL || 'http://127.0.0.1:8000';
 
 const useProxy = false; 
 
 const instance = axios.create({
   baseURL: useProxy ? '/api' : baseURL,
+  withCredentials: true,  
 });
 
 
-instance.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-
-instance.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      
-      localStorage.removeItem('auth_token');
-      
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
-  }
-);
+instance.defaults.headers.common['Cache-Control'] = 'no-store'
+instance.defaults.headers.common['Pragma'] = 'no-cache'
+instance.defaults.headers.common['Expires'] = '0'
 
 
 export const authApi = {
   async googleAuth(googleToken: string): Promise<{
     status: string;
-    token: string;
+    
     user: {
       email: string;
       name: string;
@@ -71,6 +48,14 @@ export const authApi = {
     };
   }> {
     const res = await instance.get('/auth/verify');
+    return res.data;
+  },
+
+  async refreshToken(): Promise<{
+    status: string;
+    message: string;
+  }> {
+    const res = await instance.post('/auth/refresh');
     return res.data;
   },
 
@@ -95,7 +80,7 @@ export const api = {
       form.append('patient_id', String(patientId));
     }
     const res = await instance.post('/process_audio', form, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: { 'Content-Type': 'multipart/form-data', 'Cache-Control': 'no-store' },
     });
     return res.data;
   },
@@ -117,13 +102,14 @@ export const api = {
 
   async getPatients(sessionId?: string): Promise<PatientResponse> {
     const res = await instance.get('/patients', {
-      params: sessionId ? { session_id: sessionId } : {}
+      params: sessionId ? { session_id: sessionId } : {},
+      headers: { 'Cache-Control': 'no-store' }
     });
     return res.data;
   },
 
   async getPatient(tokenId: string): Promise<PatientResponse> {
-    const res = await instance.get(`/patients/${tokenId}`);
+    const res = await instance.get(`/patients/${tokenId}`, { headers: { 'Cache-Control': 'no-store' } });
     return res.data;
   },
 
@@ -143,7 +129,7 @@ export const api = {
     }>;
     total_records: number;
   }> {
-    const res = await instance.get(`/patient/${patientId}/soap_records`);
+    const res = await instance.get(`/patient/${patientId}/soap_records`, { headers: { 'Cache-Control': 'no-store' } });
     return res.data;
   },
 
@@ -154,17 +140,12 @@ export const api = {
   }> {
     const res = await instance.put(`/soap_record/${recordId}`, {
       soap_sections: soapSections
-    });
+    }, { headers: { 'Cache-Control': 'no-store' } });
     return res.data;
   },
 
-
   getAudioUrl(storagePath: string): string {
-  
-  const base = useProxy ? '/api' : baseURL;
-  return `${base}/download_audio?storage_path=${encodeURIComponent(storagePath)}`;
-},
+    const base = useProxy ? '/api' : baseURL;
+    return `${base}/download_audio?storage_path=${encodeURIComponent(storagePath)}`;
+  },
 };
-
-
-
