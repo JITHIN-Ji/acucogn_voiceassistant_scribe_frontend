@@ -10,7 +10,7 @@ import type {
   PatientResponse 
 } from '../types';
 
-const baseURL = (import.meta as any).env?.VITE_API_URL || 'http://127.0.0.1:8000';
+const baseURL = (import.meta as any).env?.VITE_API_URL || 'https://web-application-voice-assitant.onrender.com';
 
 const useProxy = false; 
 
