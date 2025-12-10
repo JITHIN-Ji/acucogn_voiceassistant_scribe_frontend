@@ -32,7 +32,7 @@ export function AudioUpload({ onProcessed, patientId }: Props) {
       setResult(res);
       onProcessed?.(res);
     } catch (err: any) {
-      setError(err?.response?.data?.detail || 'Upload failed');
+      setError(err?.response?.data?.detail || 'Network connection failed');
     } finally {
       setLoading(false);
     }
