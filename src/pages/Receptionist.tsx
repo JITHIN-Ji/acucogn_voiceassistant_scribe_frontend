@@ -150,18 +150,18 @@ export function Receptionist() {
           top: '43%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          backgroundColor: '#ff6b6b',
-          border: '2px solid #ff5252',
-          borderRadius: '12px',
-          padding: '20px 24px',
-          color: '#fff',
+          backgroundColor: '#FF9800',
+          border: '2px solid #F57C00',
+          borderRadius: '16px',
+          padding: '24px 28px',
+          color: '#ffffff',
           zIndex: 9999,
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
-          maxWidth: '400px',
+          boxShadow: '0 10px 40px rgba(245, 124, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.15)',
+          maxWidth: '420px',
           textAlign: 'center',
           fontSize: '15px',
           fontWeight: 500,
-          lineHeight: '1.5'
+          lineHeight: '1.6'
         }}>
           <div style={{ position: 'relative' }}>
             <button
@@ -170,36 +170,40 @@ export function Receptionist() {
               title="Close"
               style={{
                 position: 'absolute',
-                top: '-32px',
-                right: '-32px',
-                width: '32px',
-                height: '32px',
+                top: '-34px',
+                right: '-34px',
+                width: '36px',
+                height: '36px',
                 borderRadius: '50%',
-                border: '2px solid #fff',
-                background: '#d63031',
-                color: '#fff',
+                border: '2px solid #ffffff',
+                background: 'linear-gradient(135deg, #FB8C00 0%, #F57C00 100%)',
+                color: '#ffffff',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '16px',
+                fontSize: '18px',
                 fontWeight: 'bold',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                transition: 'all 0.2s ease'
+                boxShadow: '0 4px 16px rgba(245, 124, 0, 0.4)',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#b71c1c';
-                e.currentTarget.style.transform = 'scale(1.1)';
+                e.currentTarget.style.background = 'linear-gradient(135deg, #E65100 0%, #EF6C00 100%)';
+                e.currentTarget.style.transform = 'scale(1.15) rotate(90deg)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(230, 81, 0, 0.5)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = '#d63031';
-                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.background = 'linear-gradient(135deg, #FB8C00 0%, #F57C00 100%)';
+                e.currentTarget.style.transform = 'scale(1) rotate(0deg)';
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(245, 124, 0, 0.4)';
               }}
             >
               ✕
             </button>
 
-            <div style={{ padding: '8px 4px' }}>{error}</div>
+            <div style={{ padding: '8px 4px', fontWeight: '600', textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>
+              ⚠️ {error}
+            </div>
           </div>
         </div>
       )}
