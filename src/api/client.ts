@@ -10,7 +10,7 @@ import type {
   PatientResponse 
 } from '../types';
 
-const baseURL = (import.meta as any).env?.VITE_API_URL || 'https://web-application-voice-assitant.onrender.com';
+const baseURL = (import.meta as any).env?.VITE_API_URL || 'https://zealous-ground-07c2d0b10.3.azurestaticapps.net';
 
 const useProxy = false; 
 
