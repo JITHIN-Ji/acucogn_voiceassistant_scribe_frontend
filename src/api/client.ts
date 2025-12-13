@@ -10,7 +10,7 @@ import type {
   PatientResponse 
 } from '../types';
 
-const baseURL = (import.meta as any).env?.VITE_API_URL || 'https://zealous-ground-07c2d0b10.3.azurestaticapps.net';
+const baseURL = (import.meta as any).env?.VITE_API_URL || 'https://acucogn-scribe-api-d9h5a7gzepd3dtg2.canadacentral-01.azurewebsites.net';
 
 const useProxy = false; 
 
