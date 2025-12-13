@@ -8,6 +8,7 @@ export function Login() {
   const { login } = useAuth();
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
     setIsLoading(true);
@@ -36,7 +37,7 @@ export function Login() {
   };
 
   return (
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+    <GoogleOAuthProvider clientId={googleClientId}>
       <div style={{ 
         display: 'flex', 
         flexDirection: 'column',
@@ -99,6 +100,19 @@ export function Login() {
               border: '1px solid #fcc'
             }}>
               {error}
+            </div>
+          )}
+          {!googleClientId && (
+            <div style={{
+              backgroundColor: '#fff3cd',
+              color: '#856404',
+              padding: '14px',
+              borderRadius: '8px',
+              marginBottom: '24px',
+              fontSize: '14px',
+              border: '1px solid #ffeeba'
+            }}>
+              Google client ID is not configured. Please set VITE_GOOGLE_CLIENT_ID in your environment.
             </div>
           )}
 
