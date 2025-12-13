@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 // Configure a dev proxy for convenience: /api -> backend base URL
-const apiTarget = process.env.VITE_API_BASE_URL || 'https://zealous-ground-07c2d0b10.3.azurestaticapps.net';
+const apiTarget = process.env.VITE_API_BASE_URL || 'https://acucogn-scribe-api-d9h5a7gzepd3dtg2.canadacentral-01.azurewebsites.net';
 
 export default defineConfig({
   server: {
